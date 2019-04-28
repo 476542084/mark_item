@@ -1,0 +1,97 @@
+a{
+  text-decoration: none;
+}
+body .el-table th.gutter{
+  display: table-cell!important;
+}
+.el-input{
+  width: 200px;
+  input{
+    height: 30px;
+  }
+}
+.courseLibrary_head{
+  width: 100%;
+  padding: 2px 0px;
+  display: inline-block;
+}
+.courseLibrary_head_left{
+  line-height: 24px;
+  float: left;
+}
+.courseLibrary_head_right{
+  float: right;
+}
+.courseLibrary_head_right_icon{
+  cursor: pointer;
+}
+.courseLibrary_head_right_search{
+  width: 100px;
+  height: 25px;
+  margin-right: 25px;
+}
+.courseLibrary_head_right_add{
+  cursor: pointer;
+  margin-left: 25px;
+  border: 1px solid;
+  padding: 5px 20px;
+  border-radius: 15px;
+}
+.courseLibrary_content{
+  margin-top:20px;
+}
+.courseLibrary_edit{
+  cursor: pointer
+}
+.demo-input-suffix{
+  display: inline-block;
+}
+
+.courseLibraryForm_content_title{
+  margin: 15px 0px;
+}
+.courseLibraryForm_content_span{
+  margin-left: 100px;
+}
+.courseLibraryForm_content_textarea{
+  width: 100%;min-height: 400px;
+  padding: 15px 10px;
+}
+.courseLibraryForm_content_round{
+  position: absolute;
+  color: white;
+  background-color: rgb(44, 119, 255);
+  padding: 3px 8px;
+  border-radius: 50%;
+  top: -10px;
+  left: -5px;
+}
+.courseLibrary_content_button{
+  width: 140px;border-radius: 21px;
+  margin-top: 10px;
+}
+.el-row {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple-light {
+  background: #e5e9f2;
+}
+.grid-content {
+  position: relative;
+  min-height: 400px;
+  text-align: center;
+}
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
+
+
+
+

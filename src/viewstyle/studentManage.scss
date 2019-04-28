@@ -1,0 +1,52 @@
+a{
+  text-decoration: none;
+}
+body .el-table th.gutter{
+  display: table-cell!important;
+}
+.student_head{
+  width: 100%;
+  padding: 2px 5px;
+  display: inline-block;
+}
+.student_head_left{
+  line-height: 24px;
+  float: left;
+}
+.student_head_right{
+  float: right;
+}
+.student_head_right_icon{
+  cursor: pointer;
+}
+.student_head_right_search{
+  width: 100px;
+  height: 25px;
+  margin-right: 25px;
+}
+.student_head_right_add{
+  cursor: pointer;
+  margin-left: 25px;
+  border: 1px solid;
+  padding: 5px 10px;
+  border-radius: 15px;
+}
+.student_content ul li{
+  display: inline-block;
+  list-style-type: none;
+}
+.student_item{
+  margin: 2px;
+  display: flex;
+  align-items:center;
+  justify-content: center;
+  border: 1px solid;
+  width: 240px;
+  height: 130px;
+  text-align: center;
+  .student_item_content_title{
+    color: #2c77ff;
+  }
+}
+
+
