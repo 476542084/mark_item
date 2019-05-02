@@ -12,11 +12,12 @@
         <Icon @click="type = 'password'" v-if="type == 'text'" style="margin-top:-2px;" slot="suffix" type="ios-eye" size="25"/>
         <Icon @click="type = 'text'" v-if="type == 'password'" slot="suffix" type="ios-eye-off" size="25" />
       </el-input>
-    </el-form-item>
-    <el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
-    <el-link @click="toLogon" :underline="false" style="margin: 0px 0px 3px 0px;color:teal;float: right;">注册账号</el-link>
+    </el-form-item> 
     <el-form-item style="width:100%;">
-      <el-button type="primary" style="width:100%;" @click="handleSubmit('ruleForm')" :loading="logining">登录</el-button>
+      <el-button type="primary" style="width:100%;" @click="logon('ruleForm')" :loading="logining">注册</el-button>
+    </el-form-item>
+    <el-form-item style="width:100%;">
+      <el-button type="plain" style="width:100%;" @click="login">返回登录</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -48,26 +49,24 @@
       };
     },
     methods: {
+      login(){
+        this.$router.push('/')
+      },
       handleReset2() {
         this.$refs.ruleForm.resetFields();
       },
-      CalcuMD5(pwd) {
-        pwd = pwd.toUpperCase();
-        pwd = md5(pwd);
-        return pwd;
-      },
-      toLogon(){
-        this.$router.push('/logon')
-      },
-      handleSubmit(formName){
+      logon(formName){
         this.$refs[formName].validate((valid) => {
           console.log(md5(this.ruleForm.password))
           if(valid){
-            ParamidaPay.ApiCaller.post('index/login', {userName:this.ruleForm.userName,password:md5(this.ruleForm.password)},
+            ParamidaPay.ApiCaller.post('index/logon', {userName:this.ruleForm.userName,password:md5(this.ruleForm.password)},
               response => {
-                console.log('response',response)
                 if (response.errcode == 0) {
-                   this.$router.push('/Account')
+                  this.$message({
+                    'message': '注册成功',
+                    'type': 'success'
+                  });
+                this.$router.push('/')
                 } else {
                   this.$message({
                     'message': response.errcode,
@@ -85,6 +84,38 @@
           }
         })
       }
+          // this.$router.push('/Account')
+        // // 进行表单提交验证
+        // this.$refs[formName].validate((valid) => {
+        //   //md5(this.ruleForm.password)
+        //   if (valid) {
+        //       ParamidaPay.ApiCaller.post("/main/login",{userName:this.ruleForm.userName,password:this.ruleForm.password}, response => {
+        //         console.log(response)
+        //         if(response.errcode == 0) {
+        //             let token = response.body.token
+        //             let userName = response.body.nickName
+        //             this.$store.commit('set_token', token) //保存token
+        //             this.$store.commit('set_username', userName) //保存 username
+        //             if(this.checked){
+        //               this.$store.commit('set_Account',this.ruleForm.password) //保存token
+        //             }
+        //             if (this.$store.state.token) {
+        //               this.$router.push('/Account')
+        //             } else {
+        //             this.$router.replace('/');
+        //           }
+        //         } else {
+        //           this.$message.error(response.errmsg);
+        //         }
+        //     },response => {
+        //       this.$message.error(response.errmsg);
+        //     })
+        //   } else {
+        //     this.$message.error("提交失败，请注意填写的登录名与密码哦");
+        //     return false;
+        //   }
+        // });
+      
     }
   }
 </script>

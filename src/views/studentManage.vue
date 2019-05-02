@@ -26,6 +26,7 @@
                   <span class="el-dropdown-link">
                     <Icon type="ios-options" size="24"></Icon>{{initSelect}}
                   </span>
+                 <input @click="test" type="button" value="test">
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="0">最后修改在线</el-dropdown-item>
                     <el-dropdown-item command="-1">创建最早在前</el-dropdown-item>
@@ -102,10 +103,16 @@
     created() {
     },
     mounted() {
-      ParamidaPay.ApiCaller.get('/student/studentGroups', {},
+     
+    },
+    methods: {
+      test(){
+        console.log("dsdsd")
+
+        ParamidaPay.ApiCaller.post('index/selectAllUser', {id:1},
         response => {
           if (response.errcode == 0) {
-            this.studentData = response.body;
+            console.log('response',response)
           } else {
             this.$message({
               'message': response.errcode,
@@ -120,8 +127,10 @@
           });
         }
       );
-    },
-    methods: {
+
+
+
+      },
       searchStudent() {
         let data = {};
         if (this.searchText != '') {

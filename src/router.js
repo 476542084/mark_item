@@ -13,6 +13,11 @@ export default new Router({
       component: () => import('./views/login.vue')
     },
     {
+      path: '/logon',
+      name: 'logon',
+      component: () => import('./views/logon.vue')
+    },
+    {
       path: '/Training',
       name: 'Training',
       component: () => import('./views/Training.vue')

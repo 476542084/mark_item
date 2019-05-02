@@ -374,7 +374,7 @@ export default {
 		},
 	},
 	mounted() {
-		this.getAllAccount()
+		// this.getAllAccount()
 	},
 	updated() {
 		this.peopleNumLength = this.peopleName.length
