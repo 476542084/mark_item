@@ -2,7 +2,7 @@
   <Menu  :active-name="activemenu" ref='side_menu' style="width:200px" @on-select="navigateTo" class="nav">
         <MenuGroup title="图像标注">
             <MenuItem name="1">
-              <router-link to="/studentManage" style="color: #515a6e;padding-left:20px;">图像管理</router-link>
+              <router-link to="/imageManage" style="color: #515a6e;padding-left:20px;">图像管理</router-link>
             </MenuItem>
             <MenuItem name="2">
               <router-link to="/courseLibrary" style="color: #515a6e;padding-left:20px;">分享管理</router-link>
@@ -47,7 +47,7 @@ export default {
   created() {
     const { href } = window.location;
     const navLink = href.substr(href.indexOf('#') + 1, href.length);
-    if (navLink == '/studentManage') {
+    if (navLink == '/imageManage') {
       this.activemenu = '1';
     } if (navLink == '/courseLibrary') {
       this.activemenu = '2';

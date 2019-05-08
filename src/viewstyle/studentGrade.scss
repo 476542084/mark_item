@@ -36,9 +36,7 @@
       margin-left:-10px;
       .Card {
         width:22%;
-        height:170px;
-        margin-left:20px;
-        margin-top:30px;
+        height:140px !important;
         cursor:pointer;
         .content {
           width:100%;
@@ -61,6 +59,9 @@
     }
   }
 
+}
+.el-card__body{
+  padding: 0 !important;
 }
 
 .avatar-uploader .el-upload {

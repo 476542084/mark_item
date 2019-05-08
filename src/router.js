@@ -28,6 +28,11 @@ export default new Router({
       component: () => import('./views/friendManage.vue'),
     },
     {
+      path: '/imageManage',
+      name: 'imageManage',
+      component: () => import('./views/imageManage.vue'),
+    },
+    {
       path: '/Training',
       name: 'Training',
       component: () => import('./views/Training.vue'),

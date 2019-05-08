@@ -40,9 +40,13 @@
                           <div class="groupCard" v-show="showStudentTable">
                             <!-- 卡片 -->
                             <el-card class="Card" v-for="(item, index) in data"  :key="index">
-                              <div @click="del(item.id)" class="content" >
+                              <div @click="del(item.id)" class="content"  style="">
                                 <p class="groupName">{{item.user_name}}</p>
-                                <img style="width: 100px;height: 100px;"  :src="url+item.head_url" class="avatar">
+                                <div style="    align-items: center;
+                                display: flex;
+                                justify-content: center;    height: 140px;">
+                                  <img style="width: 100px;height: 100px;"  :src="url+item.head_url" class="avatar">
+                                </div>
                               </div>
                             </el-card>
                           </div>
@@ -64,6 +68,7 @@ import ParamidaPay from '../paramidaPay.js';
 import Config from '../config.js';
 
 require('../viewstyle/courseScore.scss');
+require('../viewstyle/studentGrade.scss');
 
 export default {
   data() {
