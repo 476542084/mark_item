@@ -13,10 +13,10 @@
         </MenuGroup>
         <MenuGroup title="用户管理">
           <MenuItem name="4">
-            <router-link to="/studentGrade" style="color: #515a6e;padding-left:20px;">个人信息</router-link>
+            <router-link to="/userManage" style="color: #515a6e;padding-left:20px;">个人信息</router-link>
           </MenuItem>
           <MenuItem name="5">
-            <router-link to="/courseScore" style="color: #515a6e;padding-left:20px;">好友管理</router-link>
+            <router-link to="/friendManage" style="color: #515a6e;padding-left:20px;">好友管理</router-link>
           </MenuItem>
         </MenuGroup>
         <MenuGroup title="消息管理">
@@ -39,38 +39,38 @@ export default {
   props: {
     msg: String,
   },
-  data(){
-    return{
-      activemenu:'1'
+  data() {
+    return {
+      activemenu: '1',
+    };
+  },
+  created() {
+    const { href } = window.location;
+    const navLink = href.substr(href.indexOf('#') + 1, href.length);
+    if (navLink == '/studentManage') {
+      this.activemenu = '1';
+    } if (navLink == '/courseLibrary') {
+      this.activemenu = '2';
+    } if (navLink == '/partialMatch') {
+      this.activemenu = '3';
+    } if (navLink == '/userManage') {
+      this.activemenu = '4';
+    } if (navLink == '/friendManage') {
+      this.activemenu = '5';
+    } if (navLink == '/Account') {
+      this.activemenu = '6';
     }
   },
-  created(){
-    let href = window.location.href
-    let navLink = href.substr(href.indexOf('#')+1,href.length)
-    if(navLink == '/studentManage'){
-      this.activemenu = '1'
-    }if(navLink == '/courseLibrary'){
-      this.activemenu = '2'
-    }if(navLink == '/partialMatch'){
-      this.activemenu = '3'
-    }if(navLink == '/studentGrade'){
-      this.activemenu = '4'
-    }if(navLink == '/courseScore'){
-      this.activemenu = '5'
-    }if(navLink == '/Account'){
-      this.activemenu = '6'
-    }
-  },
-  mounted: function() {
-      this.$nextTick(() => {
+  mounted() {
+    this.$nextTick(() => {
       this.$refs.side_menu.updateOpened();
       this.$refs.side_menu.updateActiveName();
-    })
+    });
   },
-  methods:{
-    navigateTo(name){
-        this.activemenu = name
-      }
-  }
+  methods: {
+    navigateTo(name) {
+      this.activemenu = name;
+    },
+  },
 };
 </script>

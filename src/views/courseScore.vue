@@ -70,49 +70,49 @@
 </template>
 
 <script>
-import Nav from '@/components/Nav.vue' // @ is an alias to /src
-import Head from '@/components/Head.vue'
-import Bottom from '@/components/Bottom.vue'
-import ParamidaPay from "../paramidaPay.js"
+import Nav from '@/components/Nav.vue'; // @ is an alias to /src
+import Head from '@/components/Head.vue';
+import Bottom from '@/components/Bottom.vue';
+import ParamidaPay from '../paramidaPay.js';
 
-require("../viewstyle/courseScore.scss")
+require('../viewstyle/courseScore.scss');
 
 export default {
-	data() {
-		return {
-			showStudentTable: true, // 是否显示学员表
-			cardList: [{},{},{},{},{},{},{},{},{},{},{},{}],
-			// 排序状态
-			sortStatus: [
-				{
-					value: '创建最早在前',
-					label: '创建最早在前'
-				},
-				{
-					value: '创建最晚在前',
-					label: '创建最晚在前'
-				}
-			],
-			sortMethods: '创建最早在前'
-		}
-	},
-	created(){
-	},
-	methods: {
-		// 具体分组查看学生的成绩
-		ToSeeStudentScore(index) {
-			this.showStudentTable = false
-			console.log(index)
-		},
-		// 返回学员分组表
-		backGroupTable() {
-			this.showStudentTable = true
-		}
-	},
-	components: {
-		Nav,
-		Head,
-		Bottom,
-	}
-}
+  data() {
+    return {
+      showStudentTable: true, // 是否显示学员表
+      cardList: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
+      // 排序状态
+      sortStatus: [
+        {
+          value: '创建最早在前',
+          label: '创建最早在前',
+        },
+        {
+          value: '创建最晚在前',
+          label: '创建最晚在前',
+        },
+      ],
+      sortMethods: '创建最早在前',
+    };
+  },
+  created() {
+  },
+  methods: {
+    // 具体分组查看学生的成绩
+    ToSeeStudentScore(index) {
+      this.showStudentTable = false;
+      console.log(index);
+    },
+    // 返回学员分组表
+    backGroupTable() {
+      this.showStudentTable = true;
+    },
+  },
+  components: {
+    Nav,
+    Head,
+    Bottom,
+  },
+};
 </script>

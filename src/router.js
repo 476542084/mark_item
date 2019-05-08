@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from 'vue';
+import Router from 'vue-router';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   // mode: 'history',
@@ -10,59 +10,69 @@ export default new Router({
     {
       path: '/',
       name: 'login',
-      component: () => import('./views/login.vue')
+      component: () => import('./views/login.vue'),
     },
     {
       path: '/logon',
       name: 'logon',
-      component: () => import('./views/logon.vue')
+      component: () => import('./views/logon.vue'),
+    },
+    {
+      path: '/userManage',
+      name: 'userManage',
+      component: () => import('./views/userManage.vue'),
+    },
+    {
+      path: '/friendManage',
+      name: 'friendManage',
+      component: () => import('./views/friendManage.vue'),
     },
     {
       path: '/Training',
       name: 'Training',
-      component: () => import('./views/Training.vue')
+      component: () => import('./views/Training.vue'),
     },
     {
       path: '/Account',
       name: 'Account',
-      component: () => import('./views/Account.vue')
+      component: () => import('./views/Account.vue'),
     },
     {
       path: '/courseLibrary',
       name: 'courseLibrary',
-      component: () => import('./views/courseLibrary.vue')
+      component: () => import('./views/courseLibrary.vue'),
     },
     {
       path: '/courseLibraryForm',
       name: 'courseLibraryForm',
-      component: () => import('./views/courseLibraryForm.vue')
+      component: () => import('./views/courseLibraryForm.vue'),
     },
     {
       path: '/courseScore',
       name: 'courseScore',
-      component: () => import('./views/courseScore.vue')
+      component: () => import('./views/courseScore.vue'),
     },
     {
       path: '/partialMatch',
       name: 'partialMatch',
-      component: () => import('./views/partialMatch.vue')
+      component: () => import('./views/partialMatch.vue'),
     },
     {
       path: '/studentGrade',
       name: 'studentGrade',
-      component: () => import('./views/studentGrade.vue')
+      component: () => import('./views/studentGrade.vue'),
     },
     {
       path: '/studentManage',
       name: 'studentManage',
-      component: () => import('./views/studentManage.vue')
+      component: () => import('./views/studentManage.vue'),
     },
     {
       path: '/studentManageDetail',
       name: 'studentManageDetail',
-      component: () => import(/* webpackChunkName: "about" */ './views/studentManageDetail.vue')
-    }
-  ]
+      component: () => import(/* webpackChunkName: "about" */ './views/studentManageDetail.vue'),
+    },
+  ],
 });
 
 // // 页面刷新时，重新赋值token

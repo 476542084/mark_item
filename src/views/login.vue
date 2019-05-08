@@ -22,73 +22,75 @@
 </template>
 
 <script>
-  //import { requestLogin } from '../api/api';
-  //import NProgress from 'nprogress'
-  import ParamidaPay from "../paramidaPay.js"
-  import md5 from 'js-md5'
-  require("@/viewstyle/Login.scss")
-  export default {
-    data() {
-      return {
-        type: 'password', // 类型
-        logining: false,
-        ruleForm: {
-          userName: this.$store.state.userName,
-          password: this.$store.state.password
-        },
-        rules: {
-          userName: [
-            { required: true, message: '请输入账号', trigger: 'blur' },
-          ],
-          password: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-          ]
-        },
-        checked: true
-      };
+// import { requestLogin } from '../api/api';
+// import NProgress from 'nprogress'
+import ParamidaPay from '../paramidaPay.js';
+import md5 from 'js-md5';
+
+require('@/viewstyle/Login.scss');
+
+export default {
+  data() {
+    return {
+      type: 'password', // 类型
+      logining: false,
+      ruleForm: {
+        userName: this.$store.state.userName,
+        password: this.$store.state.password,
+      },
+      rules: {
+        userName: [
+          { required: true, message: '请输入账号', trigger: 'blur' },
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+        ],
+      },
+      checked: true,
+    };
+  },
+  methods: {
+    handleReset2() {
+      this.$refs.ruleForm.resetFields();
     },
-    methods: {
-      handleReset2() {
-        this.$refs.ruleForm.resetFields();
-      },
-      CalcuMD5(pwd) {
-        pwd = pwd.toUpperCase();
-        pwd = md5(pwd);
-        return pwd;
-      },
-      toLogon(){
-        this.$router.push('/logon')
-      },
-      handleSubmit(formName){
-        this.$refs[formName].validate((valid) => {
-          console.log(md5(this.ruleForm.password))
-          if(valid){
-            ParamidaPay.ApiCaller.post('index/login', {userName:this.ruleForm.userName,password:md5(this.ruleForm.password)},
-              response => {
-                console.log('response',response)
-                if (response.errcode == 0) {
-                   this.$router.push('/Account')
-                } else {
-                  this.$message({
-                    'message': response.errcode,
-                    'type': 'error'
-                  });
-                }
-              },
-              response => {
+    CalcuMD5(pwd) {
+      pwd = pwd.toUpperCase();
+      pwd = md5(pwd);
+      return pwd;
+    },
+    toLogon() {
+      this.$router.push('/logon');
+    },
+    handleSubmit(formName) {
+      this.$refs[formName].validate((valid) => {
+        console.log(md5(this.ruleForm.password));
+        if (valid) {
+          ParamidaPay.ApiCaller.post('index/login', { userName: this.ruleForm.userName, password: md5(this.ruleForm.password) },
+            (response) => {
+              console.log('response', response);
+              if (response.errcode == 0) {
+                this.$router.push('/userManage');
+              } else {
                 this.$message({
-                  'message': response.errcode,
-                  'type': 'error'
+                  message: response.errcode,
+                  type: 'error',
                 });
               }
-            );
-          }
-        })
-      }
-    }
-  }
+            },
+            (response) => {
+              this.$message({
+                message: response.errcode,
+                type: 'error',
+              });
+            },
+          );
+        }
+      });
+    },
+  },
+};
 </script>
 
 <style>
-  
+
 </style>
