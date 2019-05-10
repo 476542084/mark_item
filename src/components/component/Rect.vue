@@ -13,20 +13,21 @@
       @mouseup="moveRectEnd"
       :fill="svgColor" :stroke="svgColor"
       style="stroke-width:2;fill-opacity:0.1;stroke-opacity:0.9;cursor:move"/>
-      <v-editpoint :fixedPoints="fixPoints" :activeRectIndex="activeRectIndex" @funcStart="changeRectPointStart" @funcEnd="changeRectPointEnd" :scaleRect="scaleRect"/>
+      <v-editpoint v-if="showEdit" :fixedPoints="fixPoints" :activeRectIndex="activeRectIndex" @funcStart="changeRectPointStart" @funcEnd="changeRectPointEnd" :scaleRect="scaleRect"/>
     </svg>
   </div>
 </template>
 
 <script>
-import line from './utils/Line';
-import EditPoint from './utils/EditPoint';
+import line from './utils/Line.vue';
+import EditPoint from './utils/EditPoint.vue';
 import vm from '@/utils/vm';
 
 export default {
   props: ['img'],
   data() {
     return {
+      showEdit: true,
       isDown: false, // 绘制矩形的开关
       fixDown: false, // 修改矩形的开关
       isMove: false, // 移动矩形的开关
@@ -63,18 +64,23 @@ export default {
     'v-editpoint': EditPoint,
   },
   created() {
+    this.rects = [];
     // 获取其他组件传来的信息
+    vm.$off('deleteRect');
     vm.$on('deleteRect', () => {
       this.deleteRect();
     });
+    vm.$off('changeColor');
     vm.$on('changeColor', (color) => {
       this.svgColor = color;
     });
+
+  },
+  mounted() {
+    vm.$off('saveMark');
     vm.$on('saveMark', () => {
       this.saveMark();
     });
-  },
-  mounted() {
     const svgElem = this.$refs.svg;
     const svgContainerElem = this.$refs.svgContainer;
     svgContainerElem.addEventListener('mousemove', (event) => {
@@ -89,9 +95,9 @@ export default {
       const initY = event.offsetY;
       this.initPoints.initX = initX;
       this.initPoints.initY = initY;
-      const rectObj = { 
-x: 0, y: 0, w: 0, h: 0
- };
+      const rectObj = {
+        x: 0, y: 0, w: 0, h: 0,
+      };
       this.rects.push(rectObj);
       this.activeRectIndex = -1; // 按下取消激活框
     });
@@ -106,8 +112,8 @@ x: 0, y: 0, w: 0, h: 0
       const moveX = event.offsetX;
       const moveY = event.offsetY;
       if (this.isDown) {
-        const {initX} = this.initPoints;
-        const {initY} = this.initPoints;
+        const { initX } = this.initPoints;
+        const { initY } = this.initPoints;
         const index = this.rects.length - 1;
         // 计算矩形的x,y,w,h
         if (moveX > initX) {
@@ -161,7 +167,10 @@ x: 0, y: 0, w: 0, h: 0
       this.isDown = false;
       this.fixDown = false;
     });
-
+    this.showEdit = false;
+    this.$nextTick(() => {
+      this.showEdit = true;
+    });
     this.initContent();
   },
   methods: {
@@ -187,7 +196,7 @@ x: 0, y: 0, w: 0, h: 0
       console.log('fixPoints', this.fixPoints);
     },
     changeRectPointStart(position) {
-      const {activeRectIndex} = this;
+      const { activeRectIndex } = this;
       this.activeFixPosition = position;
       this.fixDown = true;
       this.isDown = false;
@@ -196,9 +205,9 @@ x: 0, y: 0, w: 0, h: 0
     },
     // 拖拽点更改矩形坐标
     changeRectPoint(xx, yy) {
-      const {activeFixPosition} = this;
-      const {activeRectIndex} = this;
-      const {fixData} = this;
+      const { activeFixPosition } = this;
+      const { activeRectIndex } = this;
+      const { fixData } = this;
       const scale = this.scaleRect;
       const x = xx / scale;
       const y = yy / scale;
@@ -280,6 +289,7 @@ x: 0, y: 0, w: 0, h: 0
       this.isDown = false;
       this.fixDown = false;
       console.log('moveInitPoints', this.moveInitPoints);
+      vm.$emit('showChat', { realIndex: index, map: this.rects[index] });
     },
     moveRect(moveX, moveY) {
       const scale = this.scaleRect;
@@ -313,26 +323,32 @@ x: 0, y: 0, w: 0, h: 0
     // 删除矩形
     deleteRect() {
       const index = this.activeRectIndex;
+      console.log('index', index);
       this.isDown = false;
       if (index === -1) {
         alert('请先选择框再进行操作');
       } else if (confirm('确认删除?')) {
-          this.activeRectIndex = -1
-          this.rects.splice(index, 1)
-        }
+        this.activeRectIndex = -1;
+        this.rects.splice(index, 1);
+      }
     },
     initContent() {
-      let test = {
- x: 532, y: 448, w: 725, h: 308
- };
-      let test1 = {
- x: 200, y: 300, w: 720, h: 500 
-};
-      this.rects.push(test);
-      this.rects.push(test1);
+      const test = {
+        x: 532, y: 448, w: 725, h: 308,
+      };
+      const test1 = {
+        x: 200, y: 300, w: 720, h: 500,
+      };
+      const flag = [];
+      flag.push(test);
+      flag.push(test1);
+      this.rects = flag;
     },
     saveMark() {
       console.log('rects', this.rects);
+      for (const i in this.rects) {
+        console.log('data', this.rects[i]);
+      }
     },
   },
   watch: {
@@ -342,11 +358,18 @@ x: 0, y: 0, w: 0, h: 0
     },
   },
   destroyed() { // 组件销毁时移除所有事件
+    console.log('销毁');
     const svgElem = this.$refs.svg;
-    svgElem.removeEventListener('mousedown', e => e.stopPropagation(), false);
-    svgElem.removeEventListener('mousemove', e => e.stopPropagation(), false);
-    svgElem.removeEventListener('mouseup', e => e.stopPropagation(), false);
-    svgElem.removeEventListener('mouseleave', e => e.stopPropagation(), false);
+    this.rects = [];
+    console.log('rects', this.rects);
+
+    if (svgElem) {
+      svgElem.removeEventListener('mousedown', e => e.stopPropagation(), false);
+      svgElem.removeEventListener('mousemove', e => e.stopPropagation(), false);
+      svgElem.removeEventListener('mouseup', e => e.stopPropagation(), false);
+      svgElem.removeEventListener('mouseleave', e => e.stopPropagation(), false);
+
+    }
   },
 };
 </script>

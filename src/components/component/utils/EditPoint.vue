@@ -24,19 +24,19 @@
     5) scaleRect(number): 矩形的缩放比例
 */
 export default {
-  props: [ 'fixedPoints', 'activeRectIndex', 'scaleRect' ],
-  data () {
-    return {}
+  props: ['fixedPoints', 'activeRectIndex', 'scaleRect'],
+  data() {
+    return {};
   },
   methods: {
-    changeRectPointStart (index) {
-      this.$emit('funcStart', index)
+    changeRectPointStart(index) {
+      this.$emit('funcStart', index);
     },
-    changeRectPointEnd () {
-      this.$emit('funcEnd')
-    }
-  }
-}
+    changeRectPointEnd() {
+      this.$emit('funcEnd');
+    },
+  },
+};
 </script>
 
 <style>

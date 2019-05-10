@@ -38,6 +38,11 @@ export default new Router({
       component: () => import('./views/testPage.vue'),
     },
     {
+      path: '/black',
+      name: 'black',
+      component: () => import('./views/black.vue'),
+    },
+    {
       path: '/Training',
       name: 'Training',
       component: () => import('./views/Training.vue'),

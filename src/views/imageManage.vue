@@ -14,11 +14,16 @@
                     <p >共上传了{{num}}张图像</p>
 										<Divider />
                     <!-- 内容区 -->
-                    <div v-if="showChat" :class="showChatFlag ? 'wechat':'notwechat'" >
-                        <span style="    margin-left: -32px;
+                    <div v-if="showMark">
+                        <i @click="hideMarkImage"  class="el-icon-back" style="font-size:35px;cursor: pointer;"></i>
+                      <TestPage v-if="showMark" :imageData="imageData" >
+                      </TestPage>
+                    </div>
+
+                    <div style="top: -56%; z-index: 9999" v-if="showChat" :class="showChatFlag ? 'wechat':'notwechat'" >
+                        <span style="  z-index:99999;margin-left: -32px;
                         position: absolute;
                         margin-top: -32px;">
-
                           <i @click="cancel"  class="el-icon-close" style="font-size:35px;cursor: pointer;"></i>
 
                         </span>
@@ -63,10 +68,10 @@
                     </div>
 
 
-										<div v-show="!showChat" class="courseScoreContent">
+										<div v-show="!showChat && !showMark" class="courseScoreContent">
 											<!-- 学员成绩表 -->
                       <div class="studentTranscript">
-                          <div class="groupCard" v-show="showStudentTable">
+                          <div class="groupCard">
                             <!-- 卡片 -->
                             <el-form  label-width="100px">
                                 <el-form-item >
@@ -97,7 +102,7 @@
                                       justify-content: center;
                                       align-items: center;
                                       background: rgba(255,255,255,0.8);">
-                                          <i @click="handleEdit(item.id)"  class="el-icon-edit" style="font-size:35px;cursor: pointer;"></i>
+                                          <i @click="handleEdit(index)"  class="el-icon-edit" style="font-size:35px;cursor: pointer;"></i>
                                           <i @click="handleDel(item.id)" class="el-icon-delete" style="font-size:35px;margin-left: 10px;cursor: pointer;"></i>
                                       </div>
 
@@ -122,6 +127,9 @@ import Bottom from '@/components/Bottom.vue';
 import ParamidaPay from '../paramidaPay.js';
 import Config from '../config.js';
 // import Wechat from '@/vue-wechat/app.vue'
+import TestPage from '@/components/pages/TestPage.vue';
+import vm from '@/utils/vm';
+
 
 require('../viewstyle/courseScore.scss');
 require('../viewstyle/wechat.scss');
@@ -130,6 +138,7 @@ require('../viewstyle/wechat.scss');
 export default {
   data() {
     return {
+      imageData: {},
       showMark: false,
       showChat: false,
       showChatFlag: false,
@@ -141,20 +150,6 @@ export default {
       uploadData: { id: 1 },
       newFriendName: '',
       imageUrl: '',
-      showStudentTable: true, // 是否显示学员表
-      cardList: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-      // 排序状态
-      sortStatus: [
-        {
-          value: '创建最早在前',
-          label: '创建最早在前',
-        },
-        {
-          value: '创建最晚在前',
-          label: '创建最晚在前',
-        },
-      ],
-      sortMethods: '创建最早在前',
     };
   },
   created() {
@@ -171,10 +166,22 @@ export default {
         console.log('data', data);
       }
     },
-
+    hideMarkImage() {
+      this.getContent();
+      this.showMark = false;
+      this.showChat = false;
+    },
     handleEdit(index) {
-      this.showChat = true;
-      this.showChatFlag = true;
+      const image = {
+        width: 1920,
+        height: 1080,
+        url: Config.pic_url + this.data[index].url,
+        id: this.data[index].id,
+      };
+
+      this.imageData = image;
+      this.showMark = true;
+
     },
     cancel() {
       this.showChatFlag = false;
@@ -231,7 +238,7 @@ export default {
       this.current = null;
     },
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+      // this.imageUrl = URL.createObjectURL(file.raw);
       this.$message({
         message: '上传成功',
         type: 'success',
@@ -343,10 +350,19 @@ export default {
   mounted() {
     this.getContent();
   },
+  created() {
+    const that = this;
+    vm.$on('showChat', (showChat) => {
+      this.showChat = true;
+      this.showChatFlag = true;
+      console.log('标注传回数据', showChat);
+    });
+  },
   components: {
     Nav,
     Head,
     Bottom,
+    TestPage,
   },
 };
 </script>

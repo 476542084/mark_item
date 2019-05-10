@@ -1,11 +1,11 @@
 <template>
     <section class="rect-mark-container">
       <header class="header-operate">
-        <v-operate/>
+        <v-operate v-if="showRect" />
       </header>
       <section class="main-mark">
         <section class="main-rect">
-          <v-rect :img="img"/>
+          <v-rect  :img="imageData"/>
         </section>
       </section>
     </section>
@@ -15,18 +15,14 @@
 import operate from '../component/Operate.vue';
 import rect from '../component/Rect.vue';
 import vm from '@/utils/vm';
-import imgUrl from '@/assets/test1.jpg';
 
 export default {
+  props: ['imageData'],
   data() {
     return {
       rects: [], // 矩形框数据
       dots: [], // 点位数据
-      img: { // 图片信息
-        url: imgUrl,
-        width: 1920,
-        height: 1080,
-      },
+      showRect: true,
     };
   },
   components: {
@@ -41,11 +37,21 @@ export default {
       this.dots = data;
     });
   },
+  mounted() {
+    this.rects = [];
+    this.img = this.imageData;
+    this.showRect = false;
+    this.$nextTick(() => {
+      this.showRect = true;
+    });
+
+  },
 };
 </script>
 
 <style lang="less" scoped>
   .rect-mark-container {
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-content: center;

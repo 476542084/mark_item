@@ -86,6 +86,8 @@
         padding: 12px 15px;
         border-bottom: 1px solid #292C33;
         cursor: pointer;
+        -webkit-transition: background-color .1s;
+        -o-transition: background-color .1s;
         transition: background-color .1s;
     }
     .avatar, .name {
@@ -163,32 +165,44 @@
 }
 
 .wechat{
-    box-shadow: darkgrey 8px 4px 8px 5px;
+    -webkit-box-shadow: darkgrey 8px 4px 8px 5px;
+            box-shadow: darkgrey 8px 4px 8px 5px;
     height: 500px;
     border: 1px solid darkgrey;
     width: 800px;position: relative;
-    animation: myfirst .8s ;
-    animation-fill-mode: forwards;
+    -webkit-animation: myfirst .8s ;
+            animation: myfirst .8s ;
+    -webkit-animation-fill-mode: forwards;
+            animation-fill-mode: forwards;
 }
 .notwechat{
-    box-shadow: darkgrey 8px 4px 8px 5px;
+    -webkit-box-shadow: darkgrey 8px 4px 8px 5px;
+            box-shadow: darkgrey 8px 4px 8px 5px;
     height: 500px;
     border: 1px solid darkgrey;
     width: 800px;position: relative;
-    animation: notmyfirst .6s ;
-    animation-fill-mode: forwards;
+    -webkit-animation: notmyfirst .6s ;
+            animation: notmyfirst .6s ;
+    -webkit-animation-fill-mode: forwards;
+            animation-fill-mode: forwards;
 }
 
-@-moz-keyframes myfirst /* Firefox */
+@-webkit-keyframes myfirst
 {
-0%   {right: -105%;}
-100% {right: -40%;}
+    0%   {right: -105%;}
+    100% {right: -40%;}
 }
 
 @keyframes myfirst
 {
     0%   {right: -105%;}
     100% {right: -40%;}
+}
+
+@-webkit-keyframes notmyfirst
+{
+    0%   {right: -40%;}
+    100% {right: -105%;}
 }
 
 @keyframes notmyfirst

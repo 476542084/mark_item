@@ -10,20 +10,21 @@
   1. 标注使用的辅助线
   2. lineObj(object): 父组件传来的数据对象，内部放置的是鼠标在svg图层上的当前位置。数据格式{lineX:x, lineY:y}
 */
-import vm from '@/utils/vm'
+import vm from '@/utils/vm';
+
 export default {
-  props: [ 'lineObj' ],
-  data () {
+  props: ['lineObj'],
+  data() {
     return {
-      show: true
-    }
+      show: true,
+    };
   },
-  created () {
+  created() {
     vm.$on('toggleLine', () => {
-      this.show = !this.show
-    })
-  }
-}
+      this.show = !this.show;
+    });
+  },
+};
 </script>
 
 <style>
