@@ -33,6 +33,11 @@ export default new Router({
       component: () => import('./views/imageManage.vue'),
     },
     {
+      path: '/testPage',
+      name: 'testPage',
+      component: () => import('./views/testPage.vue'),
+    },
+    {
       path: '/Training',
       name: 'Training',
       component: () => import('./views/Training.vue'),

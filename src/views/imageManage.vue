@@ -18,7 +18,7 @@
                         <span style="    margin-left: -32px;
                         position: absolute;
                         margin-top: -32px;">
-                          
+
                           <i @click="cancel"  class="el-icon-close" style="font-size:35px;cursor: pointer;"></i>
 
                         </span>
@@ -36,13 +36,13 @@
                             <div class="m-list" style="
                             height: 360px;">
                                 <ul style=" overflow-y: auto;height: 350px;">
-                                    <li v-for="item in 3">
+                                    <li v-for="item in 4">
                                         <img class="avatar"  width="30" height="30" :alt="text" :src="text">
                                         <p class="name">sdffd</p>
                                     </li>
                                 </ul>
                             </div>
-                            
+
                         </div>
                         <div class="main">
                             <div class="m-message" >
@@ -100,7 +100,7 @@
                                           <i @click="handleEdit(item.id)"  class="el-icon-edit" style="font-size:35px;cursor: pointer;"></i>
                                           <i @click="handleDel(item.id)" class="el-icon-delete" style="font-size:35px;margin-left: 10px;cursor: pointer;"></i>
                                       </div>
-                                     
+
                                     </div>
                                   </div>
                                 </el-card>
@@ -130,17 +130,17 @@ require('../viewstyle/wechat.scss');
 export default {
   data() {
     return {
-      showMark:false,
-      showChat:false,
-      showChatFlag:false,
+      showMark: false,
+      showChat: false,
+      showChatFlag: false,
       data: {},
-      text:'',
-      current:0,
-      seen:false,
-      num:0,
-      uploadData:{'id':1},
+      text: '',
+      current: 0,
+      seen: false,
+      num: 0,
+      uploadData: { id: 1 },
       newFriendName: '',
-      imageUrl:'',
+      imageUrl: '',
       showStudentTable: true, // 是否显示学员表
       cardList: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
       // 排序状态
@@ -160,30 +160,30 @@ export default {
   created() {
   },
   methods: {
-    inputing (e) {
-                if (e.keyCode === 13 && this.text.length) {
-                    let data = {
-                        text: this.text,
-                        date: new Date(),
-                        self: true
-                    };
-                    this.text = '';
-                    console.log('data',data)
-                }
-            },
-
-    handleEdit(index){
-      this.showChat = true
-      this.showChatFlag = true
+    inputing(e) {
+      if (e.keyCode === 13 && this.text.length) {
+        const data = {
+          text: this.text,
+          date: new Date(),
+          self: true,
+        };
+        this.text = '';
+        console.log('data', data);
+      }
     },
-    cancel(){
-      this.showChatFlag = false
+
+    handleEdit(index) {
+      this.showChat = true;
+      this.showChatFlag = true;
+    },
+    cancel() {
+      this.showChatFlag = false;
       setTimeout(() => {
-        this.showChat = false
-      }, 400)
+        this.showChat = false;
+      }, 400);
 
     },
-    handleDel(id){
+    handleDel(id) {
       this.$confirm('是否删除该图像?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -197,8 +197,8 @@ export default {
         });
       });
     },
-    delImage(index){
-      ParamidaPay.ApiCaller.post('index/delOnepic', { id: index},
+    delImage(index) {
+      ParamidaPay.ApiCaller.post('index/delOnepic', { id: index },
         (response) => {
           if (response.errcode == 0) {
             this.$message({
@@ -221,16 +221,16 @@ export default {
         },
       );
     },
-    enter(index){
-      console.log('ddd')
-        this.seen = true;
-        this.current = index;
-      },
-      leave(){
-        this.seen = false;
-        this.current = null;
-      },
-      handleAvatarSuccess(res, file) {
+    enter(index) {
+      console.log('ddd');
+      this.seen = true;
+      this.current = index;
+    },
+    leave() {
+      this.seen = false;
+      this.current = null;
+    },
+    handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
       this.$message({
         message: '上传成功',
@@ -251,7 +251,7 @@ export default {
     },
 
     getContent() {
-      this.imageUrl = Config.pic_url
+      this.imageUrl = Config.pic_url;
       ParamidaPay.ApiCaller.post('index/showUploadPic', { id: 1 },
         (response) => {
           if (response.errcode == 0) {
