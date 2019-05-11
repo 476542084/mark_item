@@ -1,9 +1,19 @@
 <template>
   <div class="operate-container">
-    <input v-if="showDel" type="button" value="删除矩形" @click="deleteRect">
-    <input type="color" name="color" v-model="color" @change="changeColor">
-    <input type="button" value="辅助线" @click="toggleLine">
-    <input type="button" value="保存所有标注" @click="saveMark">
+      <el-button @click="saveMark" type="success">保存所有标注</el-button>
+      <el-button v-if="showDel"  @click="deleteRect" type="danger">删除矩形</el-button>
+
+      <!-- <el-button type="info">信息按钮</el-button> -->
+      <el-button @click="toggleLine" type="warning">辅助线</el-button>
+      <input style="border-radius: 13px;
+      margin-left: 8px;
+      width: 80px;
+      height: 40px;" type="color" name="color" v-model="color" id="color" @change="changeColor">
+      <div class="message1" style="line-height: 48px;
+      position: absolute;
+      top: 2rem;
+      left: 43rem;
+      text-align: center;">点击那里可以选择颜色哦</div>
   </div>
 </template>
 
@@ -57,4 +67,46 @@ export default {
     display: flex;
     flex-direction: row;
   }
+  .header-operate{
+    height: 60px 0px !important;
+    padding: 5px 0px !important;
+  }
+  #color{
+border: 0;
+}
+::-webkit-color-swatch-wrapper{
+background-color:#ffffff;
+}
+::-webkit-color-swatch{
+position: relative;
+}
+.message1::before {
+  content: '';
+  width: 20px; 
+  height: 20px;
+  background-color: inherit;
+  left: -7px; /*向左侧外部延伸箭头box的一半宽度*/
+  position: absolute;
+  transform: rotate(45deg); /*旋转45度*/
+  top:50%; /*箭头在数值方向上居中*/
+  margin-top: -5px;
+}
+.message1,.message2 {
+  width: 174px;
+  height: 54px;
+  margin: 100px auto;
+  background-color: #67C23A;
+  border-bottom-color:#67C23A;/*为了给after伪元素自动继承*/
+  color: #fff;
+  font-size: 12px;
+  font-family: Arial;
+  line-height: 18px;
+  padding: 5px 12px 5px 12px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  position: relative;
+  word-break: break-all;
+}
+
+
 </style>

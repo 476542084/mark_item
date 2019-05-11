@@ -10,12 +10,17 @@
                 </Sider>
                 <Layout :style="{padding: '24px'}">
                   <Content :style="{padding: '24px', minHeight: '780px', background: '#fff'}">
-                    <h1 class='tittle'>分享管理</h1>
-                    <p >你的好友一共分享了{{num}}张图像</p>
-										<Divider />
+                    <h1 v-if="!showMark" class='tittle'>分享管理</h1>
+                    <p v-if="!showMark" >你的好友一共分享了{{num}}张图像</p>
+                    <Divider v-if="!showMark" />
+                    <!-- 搜索框 -->
+									  <div v-if="!showMark" class="serach" style="     float: right;   margin-right: 20px;">
+                      <Icon @click="serach" type="ios-search-outline" size="32" style="margin-top:4px;cursor: pointer;"/>
+                      <el-input v-model="serachName" style="width:160px;margin-left:5px;" placeholder="查找某用户分享图像"></el-input>
+                    </div>
                     <!-- 内容区 -->
                     <div v-if="showMark">
-                        <i @click="hideMarkImage"  class="el-icon-back" style="font-size:35px;cursor: pointer;"></i>
+                        <i @click="hideMarkImage"  class="el-icon-close" style="font-size:35px;cursor: pointer;"></i>
                       <TestPage v-if="showMark" :imageData="imageData" >
                       </TestPage>
                     </div>
@@ -33,7 +38,7 @@
                                 box-sizing: border-box;
                                 justify-content: center;
                                 align-items: center;">
-                                    <img align="middle"  width="40" height="40" :alt="text" :src="headUrl + selfHeadUrl">
+                                    <img align="middle" class="avatar"  width="40" height="40" :alt="text" :src="headUrl + selfHeadUrl">
                                     <p class="name">{{selfUserName}}</p>
                                 </header>
                                 <footer>
@@ -129,6 +134,8 @@ require('../viewstyle/wechat.scss');
 export default {
   data() {
     return {
+      serachName: '', // 搜索框名字
+      allUserData:{},
       mark_id:'',
       selfHeadUrl:sessionStorage.getItem('head_url')||'',
       selfUserName:sessionStorage.getItem('userName')||'',
@@ -152,6 +159,60 @@ export default {
   created() {
   },
   methods: {
+    serach() {
+			if(this.serachName == ''){
+				this.getContent()
+			}else{
+				let searchId = 0;
+				for(let index in this.allUserData){
+					if(this.serachName == this.allUserData[index]){
+						searchId = index;
+						break;
+					}
+				}
+				let tmpList = [];
+				for(let index in this.data){
+					if(this.data[index]['user_id'] == searchId){
+						tmpList.push(this.data[index]);
+					}
+				}
+				this.data = tmpList;
+        this.num = this.data.length;
+        if(this.num == 0){
+          this.$message({
+            message: '暂无该用户分享的图像',
+            type: 'error',
+          });
+        }
+			}
+    },
+    
+    getAllUser() {
+		ParamidaPay.ApiCaller.post('index/showAllUser', {},
+			(response) => {
+			if (response.errcode == 0) {
+			// this.allUserData = response.data;
+			let userData ={};
+			for(let index in response.data){
+				userData[response.data[index].id] = response.data[index].user_name;
+			}
+			this.allUserData = userData;
+			console.log('userData',userData)
+			} else {
+				this.$message({
+				message: response.errcode,
+				type: 'error',
+				});
+			}
+			},
+			(response) => {
+			this.$message({
+				message: response.errcode,
+				type: 'error',
+			});
+			},
+		);
+		},
     inputing(e) {
       if (e.keyCode === 13 && this.text.length) {
         if(!(this.text.trim()).length){
@@ -395,6 +456,7 @@ export default {
   }
   },
   mounted() {
+    this.getAllUser();
     this.getContent();
   },
   created() {

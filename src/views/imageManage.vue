@@ -10,12 +10,24 @@
                 </Sider>
                 <Layout :style="{padding: '24px'}">
                   <Content :style="{padding: '24px', minHeight: '780px', background: '#fff'}">
-                    <h1 class='tittle'>图像管理</h1>
-                    <p >你共上传了{{num}}张图像</p>
-										<Divider />
+                    <h1 v-if="!showMark" class='tittle'>图像管理</h1>
+                    <p v-if="!showMark" >你一共上传了{{num}}张图像</p>
+										<Divider v-if="!showMark" />
                     <!-- 内容区 -->
+                    <div v-if="!showMark" style="float: right;" class="partialMatch_head_right">
+                        <el-dropdown @command="handleCommand">
+                          <span class="el-dropdown-link">
+                            <Icon type="ios-options" size="24"></Icon>{{initSelect}}
+                          </span>
+                          <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="0">按上传时间顺序排序</el-dropdown-item>
+                            <el-dropdown-item command="-1">按上传时间倒序排序</el-dropdown-item>
+                          </el-dropdown-menu>
+                        </el-dropdown>
+                      </div>
+
                     <div v-if="showMark">
-                        <i @click="hideMarkImage"  class="el-icon-back" style="font-size:35px;cursor: pointer;"></i>
+                        <i @click="hideMarkImage" class="el-icon-close" style="font-size:35px;cursor: pointer;"></i>
                       <TestPage v-if="showMark" :imageData="imageData" >
                       </TestPage>
                     </div>
@@ -141,6 +153,7 @@ require('../viewstyle/wechat.scss');
 export default {
   data() {
     return {
+      initSelect:'按上传时间顺序排序',
       mark_id:'',
       selfHeadUrl:sessionStorage.getItem('head_url')||'',
       selfUserName:sessionStorage.getItem('userName')||'',
@@ -165,6 +178,34 @@ export default {
   created() {
   },
   methods: {
+    ascNum(array,key){
+    return array.sort(function(a,b){
+     var x = a[key];
+     var y = b[key];
+     return ((x>y)?-1:(x<y)?1:0)
+    })
+   },
+   descNum(array,key){
+    return array.sort(function(a,b){
+     var x = a[key];
+     var y = b[key];
+     return ((x<y)?-1:(x>y)?1:0)
+    })
+   },
+
+    handleCommand(e) {
+      console.log('ddd',e);
+      if (e == 0) {
+        this.initSelect = '按上传时间顺序排序';
+        // this.data.sort(this.decNum('nums'))
+        // console.log(this.ascNum(this.data,'nums'))
+        this.data = this.ascNum(this.data,'time');
+      } else if (e == -1) {
+        this.initSelect = '按上传时间倒序排序';
+        // console.log(this.descNum(this.data,'nums'))
+        this.data = this.descNum(this.data,'time');
+      }
+    },
     inputing(e) {
       if (e.keyCode === 13 && this.text.length) {
         if(!(this.text.trim()).length){

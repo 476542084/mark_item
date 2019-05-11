@@ -17,9 +17,9 @@
 
                       <!-- 搜索框 -->
                       <div style="display:flex;margin-right:100px;">
-                          <div class="serach">
-                              <Icon type="ios-add" size="32" @click="add" style="margin-top:4px;cursor: pointer;"/>
-                              <input type="text" v-model="newFriendName" style="-webkit-appearance: none;
+                          <div class="serach" style="    margin-left: 10px;">
+                              <!-- <Icon type="ios-add" size="32" @click="add" style="margin-top:4px;cursor: pointer;"/> -->
+                              <input placeholder="输入需要添加用户" type="text" v-model="newFriendName" style="-webkit-appearance: none;
                               background-color: #FFFFFF;
                               background-image: none;
                               border-radius: 4px;
@@ -33,22 +33,32 @@
                               line-height: 40px;
                               outline: none;
                               padding: 0 15px;">
+                              <el-button style="margin-left: 20px;"  @click="add" type="primary">添加好友</el-button>
                           </div>
                       </div>
 											<!-- 学员成绩表 -->
                       <div class="studentTranscript">
                           <div class="groupCard" v-show="showStudentTable">
                             <!-- 卡片 -->
-                            <el-card class="Card" v-for="(item, index) in data"  :key="index">
-                              <div @click="del(item.id)" class="content"  style="">
-                                <p class="groupName">{{item.user_name}}</p>
+                            <el-card class="Card" v-for="(item, index) in data"   :key="index">
+                              <div @click="del(item.id)" class="content"   style="display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              flex-wrap: wrap;">
                                 <div style="    align-items: center;
                                 display: flex;
-                                justify-content: center;    height: 140px;">
-                                  <img style="width: 100px;height: 100px;"  :src="url+item.head_url" class="avatar">
+                                justify-content: center;    height: 140px;" >
+                                  <img style="width: 120px;height: 120px;"  :src="url+item.head_url" >
+                                </div>
+                                <div >
+                                    <p style="margin-left: 15px;" >用户名：</p>
+                                    <p style="margin-left: 15px;" class="groupName">{{item.user_name}}</p>
                                 </div>
                               </div>
+                             
+
                             </el-card>
+                            
                           </div>
                       </div>
 										</div>
@@ -73,6 +83,8 @@ require('../viewstyle/studentGrade.scss');
 export default {
   data() {
     return {
+      current: 0,
+      seen: false,
       userId:sessionStorage.getItem('userId') || -1,
       userName:sessionStorage.getItem('userName') || '',
       data: {},
@@ -97,6 +109,16 @@ export default {
   created() {
   },
   methods: {
+    enter(index) {
+      console.log('ddd');
+      this.seen = true;
+      this.current = index;
+    },
+    leave() {
+      this.seen = false;
+      this.current = null;
+    },
+
     // 具体分组查看学生的成绩
     ToSeeStudentScore(index) {
       this.showStudentTable = false;
@@ -198,6 +220,11 @@ export default {
             });
           },
         );
+      }else{
+        this.$message({
+                message: '请正确填写用户名',
+                type: 'error',
+              });
       }
     },
   },

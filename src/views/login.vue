@@ -73,6 +73,10 @@ export default {
                 sessionStorage.setItem('userId',response.id);
                 sessionStorage.setItem('userName',response.userName);
                 sessionStorage.setItem('head_url',response.head_url);
+                sessionStorage.setItem('userType',response.type);
+                sessionStorage.setItem('enUpload',response.type[0]);
+                sessionStorage.setItem('enMark',response.type[1]);
+                sessionStorage.setItem('enChat',response.type[2]);
                 this.$router.push('/userManage');
               } else {
                 this.$message({
