@@ -1,3 +1,17 @@
+.el-card__body{
+    padding: 0 !important;
+}
+.otherUser_name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: bold;
+    text-align: center;
+    // position: absolute;
+    width: 175px;
+    margin-top: 5px;
+    font-size: 20px;
+}
 .m-text {
     height: 160px;
     border-top: solid 1px #ddd;
@@ -14,7 +28,7 @@
 }
 .m-message {
     padding: 10px 15px;
-    overflow-y: scroll;
+    overflow-y: auto;
     
     li {
         margin-bottom: 15px;
@@ -83,12 +97,14 @@
 
 .m-list {
     li {
-        padding: 12px 15px;
+        padding: 12px 19px;
         border-bottom: 1px solid #292C33;
         cursor: pointer;
         -webkit-transition: background-color .1s;
         -o-transition: background-color .1s;
         transition: background-color .1s;
+        align-items: center;
+        display: flex;
     }
     .avatar, .name {
         vertical-align: middle;
@@ -120,6 +136,7 @@
         display: inline-block;
         margin: 0 0 0 15px;
         font-size: 16px;
+        width:100px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;
     }
     .search {
         padding: 0 10px;
@@ -157,7 +174,7 @@
     left: 0;
 }
 .m-message {
-    height: 400px;
+    height: 385px;
 }
 .avatar{
     width: 50px !important;

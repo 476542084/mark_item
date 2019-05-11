@@ -10,7 +10,7 @@
       :width="item.w*scaleRect" :height="item.h*scaleRect"
       @click.stop.prevent="fixPointsHandle(index)"
       @mousedown.stop.prevent="moveRectStart(index, $event)"
-      @mouseup="moveRectEnd"
+      @mouseup="moveRectEnd(index)"
       :fill="svgColor" :stroke="svgColor"
       style="stroke-width:2;fill-opacity:0.1;stroke-opacity:0.9;cursor:move"/>
       <v-editpoint v-if="showEdit" :fixedPoints="fixPoints" :activeRectIndex="activeRectIndex" @funcStart="changeRectPointStart" @funcEnd="changeRectPointEnd" :scaleRect="scaleRect"/>
@@ -22,11 +22,14 @@
 import line from './utils/Line.vue';
 import EditPoint from './utils/EditPoint.vue';
 import vm from '@/utils/vm';
-
+import ParamidaPay from '../../paramidaPay.js';
 export default {
   props: ['img'],
   data() {
     return {
+      mark_id_index:{},
+      userId:sessionStorage.getItem('userId') || -1,
+      imageMarkInitData:[],
       showEdit: true,
       isDown: false, // 绘制矩形的开关
       fixDown: false, // 修改矩形的开关
@@ -77,9 +80,11 @@ export default {
 
   },
   mounted() {
+    console.log('imageData',this.img)
     vm.$off('saveMark');
     vm.$on('saveMark', () => {
       this.saveMark();
+      this.initContent();
     });
     const svgElem = this.$refs.svg;
     const svgContainerElem = this.$refs.svgContainer;
@@ -193,7 +198,6 @@ export default {
       const rightBottom = { fixedX: pointData.x + pointData.w, fixedY: pointData.y + pointData.h };
       const fixPointArr = [leftTop, centerTop, rightTop, centerLeft, centerRight, leftBottom, centerBottom, rightBottom];
       this.fixPoints = fixPointArr;
-      console.log('fixPoints', this.fixPoints);
     },
     changeRectPointStart(position) {
       const { activeRectIndex } = this;
@@ -201,7 +205,7 @@ export default {
       this.fixDown = true;
       this.isDown = false;
       this.fixData = this.rects[activeRectIndex];
-      console.log('fixData', this.fixData);
+
     },
     // 拖拽点更改矩形坐标
     changeRectPoint(xx, yy) {
@@ -271,7 +275,6 @@ export default {
       }
       this.rects.splice(activeRectIndex, 1, fixedObj);
       this.fixPointsHandle(activeRectIndex);
-      console.log('fixedObj', fixedObj);
     },
     changeRectPointEnd() {
       this.fixDown = false;
@@ -288,8 +291,7 @@ export default {
       this.isMove = true;
       this.isDown = false;
       this.fixDown = false;
-      console.log('moveInitPoints', this.moveInitPoints);
-      vm.$emit('showChat', { realIndex: index, map: this.rects[index] });
+      
     },
     moveRect(moveX, moveY) {
       const scale = this.scaleRect;
@@ -311,14 +313,22 @@ export default {
         y,
         w: this.rects[initData.index].w,
         h: this.rects[initData.index].h,
+        mark_id:this.mark_id_index[initData.index],
       };
       this.rects.splice(initData.index, 1, newObj);
       this.fixPointsHandle(initData.index);
+      
+
     },
-    moveRectEnd() {
+    moveRectEnd(index) {
       this.isDown = false;
       this.isMove = false;
       this.fixDown = false;
+      console.log('moveInitPoints', this.moveInitPoints);
+      let test =this.moveInitPoints['index'];
+      console.log('标注真实ID',this.mark_id_index[test])
+      this.getDetailChat(this.mark_id_index[test])
+     
     },
     // 删除矩形
     deleteRect() {
@@ -333,22 +343,201 @@ export default {
       }
     },
     initContent() {
-      const test = {
-        x: 532, y: 448, w: 725, h: 308,
-      };
-      const test1 = {
-        x: 200, y: 300, w: 720, h: 500,
-      };
-      const flag = [];
-      flag.push(test);
-      flag.push(test1);
-      this.rects = flag;
+      // const test = {
+      //   x: 532, y: 448, w: 725, h: 308,
+      // };
+      // const test1 = {
+      //   x: 200, y: 300, w: 720, h: 500,
+      // };
+      // const flag = [];
+      // flag.push(test);
+      // flag.push(test1);
+      // this.rects = flag;
+
+      ParamidaPay.ApiCaller.post('index/showAllMark', { img_id: this.img.id},
+        (response) => {
+          if (response.errcode == 0) {
+            const flag = [];
+            let data = response.data
+            for(let index in data){
+              let test = JSON.parse(data[index].mapdata)
+              test['mark_id'] = data[index].id
+              this.imageMarkInitData.push(test)
+              flag.push(test)
+              this.mark_id_index[index] = data[index].id
+            }
+            console.log('mark_id_index',this.mark_id_index)
+            this.rects = flag
+          } else {
+            this.$message({
+              message: response.errcode,
+              type: 'error',
+            });
+            this.data = {};
+          }
+        },
+        (response) => {
+          this.$message({
+            message: response.errcode,
+            type: 'error',
+          });
+        },
+      );
+
     },
     saveMark() {
+      //保存接口
       console.log('rects', this.rects);
-      for (const i in this.rects) {
-        console.log('data', this.rects[i]);
+      console.log('initData', this.imageMarkInitData);
+      let newData =[],editData = [],delData=[],tmpData=[]
+      for(let index in this.rects){
+        if(this.rects[index].mark_id == undefined){
+          newData.push(this.rects[index])
+        }else{
+          tmpData.push(this.rects[index])
+        }
       }
+      for(let index_t in tmpData){
+          for(let index_p in this.imageMarkInitData){
+            if(tmpData[index_t].mark_id == this.imageMarkInitData[index_p].mark_id){
+              if(this.imageMarkInitData[index_p].h == tmpData[index_t].h && this.imageMarkInitData[index_p].w == tmpData[index_t].w && this.imageMarkInitData[index_p].x == tmpData[index_t].x  && this.imageMarkInitData[index_p].y == tmpData[index_t].y){
+                //do nothing
+              }else{
+                editData.push(tmpData[index_t])
+              }
+            }
+          }
+      }
+      delData = this.deepCopy(this.imageMarkInitData)
+      for(let index_s in tmpData){
+          for(let index_q in this.imageMarkInitData){
+              if(tmpData[index_s].mark_id == this.imageMarkInitData[index_q].mark_id){
+                for(let index_w in delData){
+                  if(delData[index_w].mark_id == tmpData[index_s].mark_id){
+                    delData.splice(index_w,1)
+                    continue
+                  }
+                }
+              }
+          }
+      }
+      if(Array.isArray(editData) && editData.length !== 0){
+        this.editOneMark(editData)
+      }
+      if(Array.isArray(newData) && newData.length !== 0){
+        this.addOneMark(newData)
+      }
+      if(Array.isArray(delData) && delData.length !== 0){
+        this.delOneMark(delData)
+      }
+    },
+    addOneMark(postData){
+      ParamidaPay.ApiCaller.post('index/addOneMark', { img_id: this.img.id,data:JSON.stringify(postData),userId:this.userId},
+        (response) => {
+          if (response.errcode == 0) {
+            this.$message({
+              message: '保存成功',
+              type: 'success',
+            });
+          } else {
+            this.$message({
+              message: response.errcode,
+              type: 'error',
+            });
+            this.data = {};
+          }
+        },
+        (response) => {
+          this.$message({
+            message: response.errcode,
+            type: 'error',
+          });
+        },
+      );
+    },
+    editOneMark(postData){
+      ParamidaPay.ApiCaller.post('index/editOneMark', { img_id: this.img.id,data:JSON.stringify(postData),userId:this.userId},
+        (response) => {
+          if (response.errcode == 0) {
+            this.$message({
+              message: '保存成功',
+              type: 'success',
+            });
+          } else {
+            this.$message({
+              message: response.errcode,
+              type: 'error',
+            });
+            this.data = {};
+          }
+        },
+        (response) => {
+          this.$message({
+            message: response.errcode,
+            type: 'error',
+          });
+        },
+      );
+    },
+    delOneMark(postData){
+      ParamidaPay.ApiCaller.post('index/delOneMark', { img_id: this.img.id,data:JSON.stringify(postData),userId:this.userId},
+        (response) => {
+          if (response.errcode == 0) {
+            this.$message({
+              message: '保存成功',
+              type: 'success',
+            });
+          } else {
+            this.$message({
+              message: response.errcode,
+              type: 'error',
+            });
+            this.data = {};
+          }
+        },
+        (response) => {
+          this.$message({
+            message: response.errcode,
+            type: 'error',
+          });
+        },
+      );
+    },
+    getDetailChat(markId){
+      
+      ParamidaPay.ApiCaller.post('index/showAllMessageByMark', { markId: markId},
+        (response) => {
+          if (response.errcode == 0) {
+            response['mark_id'] = markId;
+            vm.$emit('showChat', response);
+          } else {
+            this.$message({
+              message: response.errcode,
+              type: 'error',
+            });
+            this.data = {};
+          }
+        },
+        (response) => {
+          this.$message({
+            message: response.errcode,
+            type: 'error',
+          });
+        },
+      );
+    },
+    deepCopy(obj) {
+      var result = Array.isArray(obj) ? [] : {};
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          if (typeof obj[key] === 'object') {
+            result[key] = this.deepCopy(obj[key]);   //递归复制
+          } else {
+            result[key] = obj[key];
+          }
+        }
+      }
+      return result;
     },
   },
   watch: {
@@ -358,10 +547,10 @@ export default {
     },
   },
   destroyed() { // 组件销毁时移除所有事件
-    console.log('销毁');
+
     const svgElem = this.$refs.svg;
     this.rects = [];
-    console.log('rects', this.rects);
+
 
     if (svgElem) {
       svgElem.removeEventListener('mousedown', e => e.stopPropagation(), false);

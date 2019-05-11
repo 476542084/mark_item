@@ -31,7 +31,7 @@
 														:show-file-list="false"
 														:on-success="handleAvatarSuccess"
 														:before-upload="beforeAvatarUpload">
-														<img style="width: 200px; height: 200px"  :src="url" class="avatar">
+														<img style="width: 200px; height: 200px"  :src="url" >
 													</el-upload>
 											</el-form-item>
 										</el-form>
@@ -57,6 +57,7 @@ require('../viewstyle/studentGrade.scss');
 export default {
   data() {
     return {
+      userId: sessionStorage.getItem('userId') || -1,
       url: '',
       data: {},
       uploadData: {},
@@ -86,11 +87,12 @@ export default {
       return isJPG && isLt2M;
     },
     getContent() {
-      ParamidaPay.ApiCaller.post('index/userOne', { id: 1 },
+      ParamidaPay.ApiCaller.post('index/userOne', { id: this.userId },
         (response) => {
           if (response.errcode == 0) {
             this.data = response.data;
             this.url = Config.head_url + this.data.head_url;
+            sessionStorage.setItem('head_url',this.data.head_url)
             this.realName = response.data.user_name;
             this.uploadData = { id: this.data.id || '' };
           } else {
@@ -115,7 +117,7 @@ export default {
           type: 'error',
         });
       } else {
-        	ParamidaPay.ApiCaller.post('index/editUserName', { user_name: this.data.user_name, id: 1 },
+        	ParamidaPay.ApiCaller.post('index/editUserName', { user_name: this.data.user_name, id: this.userId },
           (response) => {
             if (response.errcode == 0) {
               this.$message({
@@ -140,7 +142,7 @@ export default {
     },
     handlePassWord() {
       if (this.password != '') {
-        ParamidaPay.ApiCaller.post('index/editPassword', { password: md5(this.password), id: 1 },
+        ParamidaPay.ApiCaller.post('index/editPassword', { password: md5(this.password), id: this.userId },
           (response) => {
             if (response.errcode == 0) {
               this.$message({

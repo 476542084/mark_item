@@ -64,11 +64,15 @@ export default {
     handleSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         console.log(md5(this.ruleForm.password));
+        this.ruleForm.userName = this.ruleForm.userName.replace(/\s*/g,"");
         if (valid) {
           ParamidaPay.ApiCaller.post('index/login', { userName: this.ruleForm.userName, password: md5(this.ruleForm.password) },
             (response) => {
               console.log('response', response);
               if (response.errcode == 0) {
+                sessionStorage.setItem('userId',response.id);
+                sessionStorage.setItem('userName',response.userName);
+                sessionStorage.setItem('head_url',response.head_url);
                 this.$router.push('/userManage');
               } else {
                 this.$message({

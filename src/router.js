@@ -43,6 +43,21 @@ export default new Router({
       component: () => import('./views/black.vue'),
     },
     {
+      path: '/shareManage',
+      name: 'shareManage',
+      component: () => import('./views/shareManage.vue'),
+    },
+    {
+      path: '/hadMarkManage',
+      name: 'hadMarkManage',
+      component: () => import('./views/hadMarkManage.vue'),
+    },
+    {
+      path: '/showAllMessage',
+      name: 'showAllMessage',
+      component: () => import('./views/showAllMessage.vue'),
+    },
+    {
       path: '/Training',
       name: 'Training',
       component: () => import('./views/Training.vue'),

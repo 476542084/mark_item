@@ -73,6 +73,8 @@ require('../viewstyle/studentGrade.scss');
 export default {
   data() {
     return {
+      userId:sessionStorage.getItem('userId') || -1,
+      userName:sessionStorage.getItem('userName') || '',
       data: {},
       newFriendName: '',
       url: Config.head_url,
@@ -105,7 +107,7 @@ export default {
       this.showStudentTable = true;
     },
     getContent() {
-      ParamidaPay.ApiCaller.post('index/showAllFriends', { id: 1 },
+      ParamidaPay.ApiCaller.post('index/showAllFriends', { id: this.userId },
         (response) => {
           if (response.errcode == 0) {
             this.data = response.data;
@@ -141,7 +143,7 @@ export default {
       });
     },
     delFriend(index) {
-      ParamidaPay.ApiCaller.post('index/delOneFriend', { firendID: index, id: 1 },
+      ParamidaPay.ApiCaller.post('index/delOneFriend', { firendID: index, id: this.userId },
         (response) => {
           if (response.errcode == 0) {
             this.$message({
@@ -166,7 +168,15 @@ export default {
     },
     add() {
       if (this.newFriendName != '') {
-        ParamidaPay.ApiCaller.post('index/addOneFriend', { friendName: this.newFriendName, id: 1 },
+        this.newFriendName = this.newFriendName.replace(/\s*/g,"");
+        if(this.newFriendName == this.userName){
+          this.$message({
+            message: '你不能添加你自己！',
+            type: 'error',
+            });
+            return false;
+          }
+        ParamidaPay.ApiCaller.post('index/addOneFriend', { friendName: this.newFriendName, id: this.userId},
           (response) => {
             if (response.errcode == 0) {
               this.$message({

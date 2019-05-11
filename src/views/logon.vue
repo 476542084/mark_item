@@ -57,7 +57,8 @@
       },
       logon(formName){
         this.$refs[formName].validate((valid) => {
-          console.log(md5(this.ruleForm.password))
+          // console.log(md5(this.ruleForm.password))
+        this.ruleForm.userName = this.ruleForm.userName.replace(/\s*/g,"");
           if(valid){
             ParamidaPay.ApiCaller.post('index/logon', {userName:this.ruleForm.userName,password:md5(this.ruleForm.password)},
               response => {

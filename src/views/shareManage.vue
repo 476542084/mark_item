@@ -10,8 +10,8 @@
                 </Sider>
                 <Layout :style="{padding: '24px'}">
                   <Content :style="{padding: '24px', minHeight: '780px', background: '#fff'}">
-                    <h1 class='tittle'>图像管理</h1>
-                    <p >你共上传了{{num}}张图像</p>
+                    <h1 class='tittle'>分享管理</h1>
+                    <p >你的好友一共分享了{{num}}张图像</p>
 										<Divider />
                     <!-- 内容区 -->
                     <div v-if="showMark">
@@ -33,7 +33,7 @@
                                 box-sizing: border-box;
                                 justify-content: center;
                                 align-items: center;">
-                                    <img align="middle" class="avatar"   width="40" height="40" :alt="text" :src="headUrl + selfHeadUrl">
+                                    <img align="middle"  width="40" height="40" :alt="text" :src="headUrl + selfHeadUrl">
                                     <p class="name">{{selfUserName}}</p>
                                 </header>
                                 <footer>
@@ -45,7 +45,7 @@
                             height: 360px;">
                                 <ul style=" overflow-y: auto;height: 350px;">
                                     <li v-for="item in userList" >
-                                        <img class="avatar"  width="30" height="30" :alt="text" :src="headUrl + item.head_url">
+                                        <img class="avatar" width="30" height="30" :alt="text" :src="headUrl + item.head_url">
                                         <p class="name">{{item.user_name}}</p>
                                     </li>
                                 </ul>
@@ -76,41 +76,29 @@
                       <div class="studentTranscript">
                           <div class="groupCard">
                             <!-- 卡片 -->
-                            <el-form  label-width="100px">
-                                <el-form-item >
-                                    <el-upload
-                                      class="avatar-uploader"
-                                      action="http://localhost/mark_item_php/index/uploadPic"
-                                      :data="uploadData"
-                                      :show-file-list="false"
-                                      :on-success="handleAvatarSuccess"
-                                      :before-upload="beforeAvatarUpload">
-                                      <i class="el-icon-plus avatar-uploader-icon"></i>
-                                    </el-upload>
-                                </el-form-item>
-                              </el-form>
-
                               <el-card  style="width: 178px;
-                              height: 178px;
+                              height: 178px;    margin-top: 21px;
                               margin-left: 30px;" v-for="(item, index) in data"  :key="index" >
                                   <div class="content"  style="">
-                                    <div style="align-items: center;
+                                    <div style="align-items: center;    position: relative;
                                     display: flex;
                                     justify-content: center;" @mouseenter="enter(index)" @mouseleave="leave(index)">
                                       <img  style="width: 175px;height: 175px;"  :src="imageUrl+item.url" >
-                                      <div v-show="seen&&index==current" style="position: absolute;
+                                      <div v-show="seen&&index==current" style="flex-wrap: wrap;
+                                      position: absolute;
                                       height: 178px;
-                                      display: flex;
                                       width: 178px;
-                                      justify-content: center;
                                       align-items: center;
-                                      background: rgba(255,255,255,0.8);">
+                                      background: rgba(255, 255, 255, 0.8);
+                                      display: flex;
+                                      justify-content: center;">
                                           <i @click="handleEdit(index)"  class="el-icon-edit" style="font-size:35px;cursor: pointer;"></i>
-                                          <i @click="handleDel(item.id)" class="el-icon-delete" style="font-size:35px;margin-left: 10px;cursor: pointer;"></i>
+                                          <p class="otherUser_name">来自{{item.user_name}}</p>
                                       </div>
-
                                     </div>
+                                    
                                   </div>
+                                  
                                 </el-card>
                           </div>
                       </div>
@@ -156,7 +144,6 @@ export default {
       current: 0,
       seen: false,
       num: 0,
-      uploadData: { id: sessionStorage.getItem('userId') || -1 },
       newFriendName: '',
       imageUrl: '',
       headUrl:Config.head_url
@@ -218,7 +205,6 @@ export default {
 
       this.imageData = image;
       this.showMark = true;
-
     },
     cancel() {
       this.showChatFlag = false;
@@ -227,20 +213,7 @@ export default {
       }, 400);
 
     },
-    handleDel(id) {
-      this.$confirm('是否删除该图像?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }).then(() => {
-        this.delImage(id);
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除',
-        });
-      });
-    },
+
     delImage(index) {
       ParamidaPay.ApiCaller.post('index/delOnepic', { id: index },
         (response) => {
@@ -274,33 +247,21 @@ export default {
       this.seen = false;
       this.current = null;
     },
-    handleAvatarSuccess(res, file) {
-      // this.imageUrl = URL.createObjectURL(file.raw);
-      this.$message({
-        message: '上传成功',
-        type: 'success',
-      });
-      this.getContent();
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
-      const isLt8M = file.size / 1024 / 1024 < 8;
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
-      }
-      if (!isLt8M) {
-        this.$message.error('上传头像图片大小不能超过 8MB!');
-      }
-      return isJPG && isLt8M;
-    },
-
     getContent() {
       this.imageUrl = Config.pic_url;
-      ParamidaPay.ApiCaller.post('index/showUploadPic', { id: this.userId },
+      ParamidaPay.ApiCaller.post('index/showFriendsShare', { id: this.userId },
         (response) => {
           if (response.errcode == 0) {
-            this.data = response.data;
-            this.num = response.data.length;
+            let data = [];
+            let num = 0;
+            for(let data_second in response.data){
+              for(let index in response.data[data_second]){
+                  data.push(response.data[data_second][index]);
+                  num++;
+              }
+            }
+            this.data = data;
+            this.num = num;
 
           } else {
             this.$message({

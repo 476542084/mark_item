@@ -5,10 +5,10 @@
               <router-link to="/imageManage" style="color: #515a6e;padding-left:20px;">图像管理</router-link>
             </MenuItem>
             <MenuItem name="2">
-              <router-link to="/courseLibrary" style="color: #515a6e;padding-left:20px;">分享管理</router-link>
+              <router-link to="/shareManage" style="color: #515a6e;padding-left:20px;">分享管理</router-link>
             </MenuItem>
             <MenuItem name="3">
-              <router-link to="/partialMatch" style="color: #515a6e;padding-left:20px;">已标注管理</router-link>
+              <router-link to="/hadMarkManage" style="color: #515a6e;padding-left:20px;">已标注管理</router-link>
             </MenuItem>
         </MenuGroup>
         <MenuGroup title="用户管理">
@@ -21,7 +21,7 @@
         </MenuGroup>
         <MenuGroup title="消息管理">
             <MenuItem name="6">
-                <router-link to="/Account" style="color: #515a6e;padding-left:20px;">消息管理</router-link>
+                <router-link to="/showAllMessage" style="color: #515a6e;padding-left:20px;">消息管理</router-link>
             </MenuItem>
         </MenuGroup>
   </Menu>
@@ -49,15 +49,15 @@ export default {
     const navLink = href.substr(href.indexOf('#') + 1, href.length);
     if (navLink == '/imageManage') {
       this.activemenu = '1';
-    } if (navLink == '/courseLibrary') {
+    } if (navLink == '/shareManage') {
       this.activemenu = '2';
-    } if (navLink == '/partialMatch') {
+    } if (navLink == '/hadMarkManage') {
       this.activemenu = '3';
     } if (navLink == '/userManage') {
       this.activemenu = '4';
     } if (navLink == '/friendManage') {
       this.activemenu = '5';
-    } if (navLink == '/Account') {
+    } if (navLink == '/showAllMessage') {
       this.activemenu = '6';
     }
   },
