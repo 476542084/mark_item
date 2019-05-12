@@ -27,6 +27,9 @@ export default {
   props: ['img'],
   data() {
     return {
+      enAddMark:sessionStorage.getItem('enAddMark'),
+      eneEditMark:sessionStorage.getItem('eneEditMark'),
+      enDelMark:sessionStorage.getItem('enDelMark'),
       mark_id_index:{},
       userId:sessionStorage.getItem('userId') || -1,
       imageMarkInitData:[],
@@ -80,7 +83,6 @@ export default {
 
   },
   mounted() {
-    console.log('imageData',this.img)
     vm.$off('saveMark');
     vm.$on('saveMark', () => {
       this.saveMark();
@@ -294,6 +296,13 @@ export default {
       
     },
     moveRect(moveX, moveY) {
+      if(this.eneEditMark == 0){
+        this.$message({
+          message: '你已经被禁止修改标注',
+          type: 'error',
+        });
+        return false;
+      }
       const scale = this.scaleRect;
       const initData = this.moveInitPoints;
       let x = (moveX - initData.gapX) / scale + initData.x;
@@ -324,16 +333,20 @@ export default {
       this.isDown = false;
       this.isMove = false;
       this.fixDown = false;
-      console.log('moveInitPoints', this.moveInitPoints);
       let test =this.moveInitPoints['index'];
-      console.log('标注真实ID',this.mark_id_index[test])
       this.getDetailChat(this.mark_id_index[test])
      
     },
     // 删除矩形
     deleteRect() {
+      if(this.enDelMark == 0){
+        this.$message({
+          message: '你已经被禁止删除标注',
+          type: 'error',
+        });
+        return false;
+      }
       const index = this.activeRectIndex;
-      console.log('index', index);
       this.isDown = false;
       if (index === -1) {
         alert('请先选择框再进行操作');
@@ -343,17 +356,6 @@ export default {
       }
     },
     initContent() {
-      // const test = {
-      //   x: 532, y: 448, w: 725, h: 308,
-      // };
-      // const test1 = {
-      //   x: 200, y: 300, w: 720, h: 500,
-      // };
-      // const flag = [];
-      // flag.push(test);
-      // flag.push(test1);
-      // this.rects = flag;
-
       ParamidaPay.ApiCaller.post('index/showAllMark', { img_id: this.img.id},
         (response) => {
           if (response.errcode == 0) {
@@ -366,7 +368,6 @@ export default {
               flag.push(test)
               this.mark_id_index[index] = data[index].id
             }
-            console.log('mark_id_index',this.mark_id_index)
             this.rects = flag
           } else {
             this.$message({
@@ -387,8 +388,6 @@ export default {
     },
     saveMark() {
       //保存接口
-      console.log('rects', this.rects);
-      console.log('initData', this.imageMarkInitData);
       let newData =[],editData = [],delData=[],tmpData=[]
       for(let index in this.rects){
         if(this.rects[index].mark_id == undefined){
@@ -425,6 +424,13 @@ export default {
         this.editOneMark(editData)
       }
       if(Array.isArray(newData) && newData.length !== 0){
+         if(this.enAddMark == 0){
+          this.$message({
+          message: '你已经被禁止新添标注',
+          type: 'error',
+          });
+          return false;
+        }
         this.addOneMark(newData)
       }
       if(Array.isArray(delData) && delData.length !== 0){
@@ -526,6 +532,7 @@ export default {
         },
       );
     },
+    //深拷贝
     deepCopy(obj) {
       var result = Array.isArray(obj) ? [] : {};
       for (var key in obj) {
@@ -539,6 +546,42 @@ export default {
       }
       return result;
     },
+    //防抖动
+    debounce(method,delay) {
+    let timer = null;
+    return function () {
+        let self = this,
+            args = arguments;
+        timer && clearTimeout(timer);
+        timer = setTimeout(function () {
+            method.apply(self,args);
+        },delay);
+    }
+  },
+    //节流
+    throttle(method, mustRunDelay) {
+      let timer,
+          args = arguments,
+          start;
+      return function loop() {
+          let self = this;
+          let now = Date.now();
+          if(!start){
+              start = now;
+          }
+          if(timer){
+              clearTimeout(timer);
+          }
+          if(now - start >= mustRunDelay){
+              method.apply(self, args);
+              start = now;
+          }else {
+              timer = setTimeout(function () {
+                  loop.apply(self, args);
+              }, 50);
+          }
+      }
+  },
   },
   watch: {
     // rects发生变化的话将新数据传递给父组件

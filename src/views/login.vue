@@ -1,8 +1,8 @@
 <template>
   <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-position="left" label-width="0px" class="demo-ruleForm login-container">
     <h3 class="title">图像标注-在线协作系统</h3>
-    <el-form-item prop="userName">
-      <el-input type="text" clearable v-model="ruleForm.userName " auto-complete="off" placeholder="账号">
+    <el-form-item prop="account">
+      <el-input type="text" clearable v-model="ruleForm.account " auto-complete="off" placeholder="账号">
         <Icon style="color:#000;margin-top:-5px;" slot="prefix" type="ios-person" size="23"/>
       </el-input>
     </el-form-item>
@@ -35,8 +35,9 @@ export default {
       type: 'password', // 类型
       logining: false,
       ruleForm: {
-        userName: this.$store.state.userName,
-        password: this.$store.state.password,
+        account: '',
+        userName: '',
+        password: '',
       },
       rules: {
         userName: [
@@ -63,20 +64,21 @@ export default {
     },
     handleSubmit(formName) {
       this.$refs[formName].validate((valid) => {
-        console.log(md5(this.ruleForm.password));
-        this.ruleForm.userName = this.ruleForm.userName.replace(/\s*/g,"");
+        this.ruleForm.account = this.ruleForm.account.replace(/\s*/g,"");
         if (valid) {
-          ParamidaPay.ApiCaller.post('index/login', { userName: this.ruleForm.userName, password: md5(this.ruleForm.password) },
+          ParamidaPay.ApiCaller.post('index/login', { account: this.ruleForm.account, password: md5(this.ruleForm.password) },
             (response) => {
-              console.log('response', response);
               if (response.errcode == 0) {
                 sessionStorage.setItem('userId',response.id);
                 sessionStorage.setItem('userName',response.userName);
                 sessionStorage.setItem('head_url',response.head_url);
                 sessionStorage.setItem('userType',response.type);
                 sessionStorage.setItem('enUpload',response.type[0]);
-                sessionStorage.setItem('enMark',response.type[1]);
-                sessionStorage.setItem('enChat',response.type[2]);
+                sessionStorage.setItem('enDelUpload',response.type[1]);
+                sessionStorage.setItem('enAddMark',response.type[2]);
+                sessionStorage.setItem('eneEditMark',response.type[3]);
+                sessionStorage.setItem('enDelMark',response.type[4]);
+                sessionStorage.setItem('enChat',response.type[5]);
                 this.$router.push('/userManage');
               } else {
                 this.$message({

@@ -86,7 +86,7 @@
           </Content>
         </Layout>
       </Layout>
-      <Footer class="layout-footer-center" style="background:#fff;text-align:center">中国大地保险 2018 &copy; 脑穿越</Footer>
+      <Footer class="layout-footer-center" style="background:#fff;text-align:center">图像标注在线协作系统 2019 &copy; 20150390237 黄志谋</Footer>
     </Layout>
   </div>
 </template>
@@ -187,7 +187,6 @@ export default {
       );
     },
     enter(index) {
-      console.log('ddd');
       this.seen = true;
       this.current = index;
     },
@@ -220,15 +219,11 @@ export default {
 
     },
     handleCommand(e) {
-      console.log('ddd',e);
       if (e == 0) {
         this.initSelect = '标注数从高到低';
-        // this.data.sort(this.decNum('nums'))
-        // console.log(this.ascNum(this.data,'nums'))
         this.data = this.ascNum(this.data,'nums');
       } else if (e == -1) {
         this.initSelect = '标注数从低到高';
-        // console.log(this.descNum(this.data,'nums'))
         this.data = this.descNum(this.data,'nums');
       }
     }

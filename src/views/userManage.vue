@@ -15,15 +15,18 @@
 						<!-- 内容区 -->
 						<div class="studentGradeContent">
 									<el-form  label-width="100px">
-											<el-form-item label="个人用户名">
-												<el-input style="width:200px;" v-model="data.user_name"></el-input>
-												<el-button type="primary" style="margin-left:50px;" @click="handleName()" >修改</el-button>
-											</el-form-item>
-											<el-form-item label="个人密码">
-													<el-input type="password" style="width:200px;" v-model="password"></el-input>
-													<el-button type="primary" style="margin-left:50px;" @click="handlePassWord()" >修改</el-button>
+											<el-form-item label="账号">
+												<el-input :disabled="true" style="width:200px;" v-model="data.account"></el-input>
+                      </el-form-item>
+                      <el-form-item label="用户名">
+                          <el-input :disabled="true" style="width:200px;" v-model="data.user_name"></el-input>
+                          <el-button type="primary" style="margin-left:50px;" @click="editUserName =true" >修改</el-button>
+                        </el-form-item>
+											<el-form-item label="密码">
+													<el-input :disabled="true"  type="password"   style="width:200px;" value="testapassword" ></el-input>
+													<el-button type="primary" style="margin-left:50px;" @click="editPassWord = true" >修改</el-button>
 												</el-form-item>
-											<el-form-item label="个人头像">
+											<el-form-item label="头像">
 													<el-upload
 														class="avatar-uploader"
 														action="http://localhost/mark_item_php/index/editUserPic"
@@ -39,8 +42,50 @@
 					</Content>
 				</Layout>
 			</Layout>
-		<Footer class="layout-footer-center" style="background:#fff;text-align:center">建设银行智能私教管理后台 2019 &copy; 脑穿越</Footer>
-		</Layout>
+		<Footer class="layout-footer-center" style="background:#fff;text-align:center">图像标注在线协作系统 2019 &copy; 20150390237 黄志谋</Footer>
+    </Layout>
+    
+    <el-dialog
+			title="修改密码"
+			:close-on-click-modal="false"
+			:visible.sync="editPassWord"
+			width="500px"
+			>
+			<el-form label-position="left" label-width="90px">
+				<el-form-item label="新密码">
+					<el-input type="password" v-model="newPassWordFirst" @input="getnewPassWordFirstNum" :maxlength="16"  style="width:250px"></el-input>
+					<span style="margin-left:30px; font-size:16px;">({{ newPassWordFirstNum }}/16)</span>
+				</el-form-item>
+				<el-form-item label="再输入一次">
+          <el-input type="password" v-model="newPassWordSecond" @input="getnewPassWordSecondNum" :maxlength="16" style="width:250px"></el-input>
+					<span style="margin-left:30px; font-size:16px;">({{ newPassWordSecondNum }}/16)</span>
+          
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="handlePassWord">确认修改</el-button>
+				<el-button @click="editPassWord = false">取 消</el-button>
+      </span> 
+    </el-dialog>
+
+    <el-dialog
+			title="修改用户名"
+			:close-on-click-modal="false"
+			:visible.sync="editUserName"
+			width="500px"
+			>
+			<el-form label-position="left" label-width="90px">
+				<el-form-item label="新用户名">
+					<el-input  v-model="newUserName" @input="getnewUserNameNum" :maxlength="12"  style="width:250px"></el-input>
+					<span style="margin-left:30px; font-size:16px;">({{ newUserNameNum }}/12)</span>
+				</el-form-item>
+			</el-form>
+			<span slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="handleName">确认修改</el-button>
+				<el-button @click="editUserName = false">取 消</el-button>
+      </span> 
+    </el-dialog>
+
 	</div>
 </template>
 <script>
@@ -57,6 +102,14 @@ require('../viewstyle/studentGrade.scss');
 export default {
   data() {
     return {
+      newUserNameNum:0,
+      newUserName:'',
+      newPassWordFirstNum:0,
+      newPassWordSecondNum:0,
+      newPassWordFirst:'',
+      newPassWordSecond:'',
+      editPassWord:false,
+      editUserName:false,
       userId: sessionStorage.getItem('userId') || -1,
       url: '',
       data: {},
@@ -66,6 +119,17 @@ export default {
     };
   },
   methods: {
+    // 获取第一次密码长度
+		getnewPassWordFirstNum(value) {
+			this.newPassWordFirstNum = value.length
+    },
+    // 获取第二次密码长度
+		getnewPassWordSecondNum(value) {
+			this.newPassWordSecondNum = value.length
+    },
+    getnewUserNameNum(value){
+			this.newUserNameNum = value.length
+    },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
       this.$message({
@@ -111,19 +175,32 @@ export default {
       );
     },
     handleName() {
-      if (this.realName === this.data.user_name) {
+      if (this.newUserName === '') {
+        this.$message({
+          message: '用户名不能为空',
+          type: 'error',
+        });
+        return false;
+ 
+      }
+      if (this.newUserName === this.data.user_name) {
         this.$message({
           message: '与原名相同，修改失败',
           type: 'error',
         });
+        return false;
       } else {
-        	ParamidaPay.ApiCaller.post('index/editUserName', { user_name: this.data.user_name, id: this.userId },
+        	ParamidaPay.ApiCaller.post('index/editUserName', { user_name: this.newUserName, id: this.userId },
           (response) => {
             if (response.errcode == 0) {
               this.$message({
                 message: '修改成功',
                 type: 'success',
               });
+              sessionStorage.setItem('userName',this.newUserName);
+              this.editUserName = false;
+              this.newUserName = '';
+              this.getContent();
             } else {
               this.$message({
                 message: response.errcode,
@@ -141,14 +218,33 @@ export default {
       }
     },
     handlePassWord() {
-      if (this.password != '') {
-        ParamidaPay.ApiCaller.post('index/editPassword', { password: md5(this.password), id: this.userId },
+      if(this.newPassWordFirstNum == 0 || this.newPassWordSecondNum == 0){
+        this.$message({
+          message: '密码不能为空',
+          type: 'error',
+        });
+        return true;
+      }
+
+      if(this.newPassWordFirst !== this.newPassWordSecond){
+        this.$message({
+          message: '两次密码输入不一致',
+          type: 'error',
+        });
+        return true;
+      }
+        ParamidaPay.ApiCaller.post('index/editPassword', { password: md5(this.newPassWordFirst), id: this.userId },
           (response) => {
+            this.editPassWord = false;
             if (response.errcode == 0) {
               this.$message({
                 message: '修改成功',
                 type: 'success',
               });
+              this.newPassWordFirst = '';
+              this.newPassWordSecond = '';
+              this.newPassWordFirstNum = 0;
+              this.newPassWordSecondNum = 0;
             } else {
               this.$message({
                 message: response.errcode,
@@ -163,7 +259,7 @@ export default {
             });
           },
         );
-      }
+      
     },
   },
   mounted() {

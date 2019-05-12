@@ -88,25 +88,28 @@
                       <div class="studentTranscript">
                           <div class="groupCard">
                             <!-- 卡片 -->
-                            <el-form  label-width="100px">
-                                <el-form-item >
-                                    <el-upload
-                                      class="avatar-uploader"
-                                      action="http://localhost/mark_item_php/index/uploadPic"
-                                      :data="uploadData"
-                                      :show-file-list="false"
-                                      :on-success="handleAvatarSuccess"
-                                      :before-upload="beforeAvatarUpload">
-                                      <i class="el-icon-plus avatar-uploader-icon"></i>
-                                    </el-upload>
-                                </el-form-item>
-                              </el-form>
-
+                            <div @click="showUploadStatus()">
+                                <el-form label-width="100px">
+                                    <el-form-item >
+                                        <el-upload
+                                          :disabled="enUpload == '0'? true : false "
+                                          class="avatar-uploader"
+                                          action="http://localhost/mark_item_php/index/uploadPic"
+                                          :data="uploadData"
+                                          :show-file-list="false"
+                                          :on-success="handleAvatarSuccess"
+                                          :before-upload="beforeAvatarUpload">
+                                          <i class="el-icon-plus avatar-uploader-icon"></i>
+                                        </el-upload>
+                                    </el-form-item>
+                                  </el-form>
+                            </div>
                               <el-card  style="width: 178px;
                               height: 178px;
                               margin-left: 30px;" v-for="(item, index) in data"  :key="index" >
                                   <div class="content"  style="">
                                     <div style="align-items: center;
+                                    position: relative;
                                     display: flex;
                                     justify-content: center;" @mouseenter="enter(index)" @mouseleave="leave(index)">
                                       <img  style="width: 175px;height: 175px;"  :src="imageUrl+item.url" >
@@ -130,7 +133,7 @@
                   </Content>
                 </Layout>
             </Layout>
-				<Footer class="layout-footer-center" style="background:#fff;text-align:center">中国大地保险 2018 &copy; 脑穿越</Footer>
+				<Footer class="layout-footer-center" style="background:#fff;text-align:center">图像标注在线协作系统 2019 &copy; 20150390237 黄志谋</Footer>
         </Layout>
     </div>
 </template>
@@ -153,6 +156,9 @@ require('../viewstyle/wechat.scss');
 export default {
   data() {
     return {
+      enUpload:sessionStorage.getItem('enUpload'),
+      enDelUpload:sessionStorage.getItem('enDelUpload'),
+      enChat:sessionStorage.getItem('enChat'),
       initSelect:'按上传时间顺序排序',
       mark_id:'',
       selfHeadUrl:sessionStorage.getItem('head_url')||'',
@@ -178,6 +184,15 @@ export default {
   created() {
   },
   methods: {
+    showUploadStatus(){
+      if(this.enUpload == 0){
+        this.$message({
+          message: '你已经被禁止上传图像',
+          type: 'error',
+        });
+        return false;
+      }
+    },
     ascNum(array,key){
     return array.sort(function(a,b){
      var x = a[key];
@@ -194,19 +209,16 @@ export default {
    },
 
     handleCommand(e) {
-      console.log('ddd',e);
       if (e == 0) {
         this.initSelect = '按上传时间顺序排序';
-        // this.data.sort(this.decNum('nums'))
-        // console.log(this.ascNum(this.data,'nums'))
         this.data = this.ascNum(this.data,'time');
       } else if (e == -1) {
         this.initSelect = '按上传时间倒序排序';
-        // console.log(this.descNum(this.data,'nums'))
         this.data = this.descNum(this.data,'time');
       }
     },
     inputing(e) {
+      
       if (e.keyCode === 13 && this.text.length) {
         if(!(this.text.trim()).length){
           this.$message({
@@ -216,6 +228,16 @@ export default {
             this.text = '';
             return true;
         }
+
+        if(this.enChat == 0){
+        this.$message({
+          message: '你已经被禁止留言',
+          type: 'error',
+        });
+        this.text = '';
+        return false;
+      }
+
         this.text = this.text.trim()
         const data = {
           content: this.text,
@@ -225,21 +247,12 @@ export default {
           user_name:this.selfUserName
         };
         let dom = document.getElementsByClassName('m-message')[0]
-
-        console.log('scrollTopBefore',dom.scrollTop)
-
         this.chatList.push(data)
         this.addOneMessageByMark(this.text);
         this.text = '';
-        console.log('data', data);
         this.$nextTick(() => {
           dom.scrollTop = dom.scrollHeight - dom.clientHeight +95;
         });
-       
-        console.log('scrollTop',dom.scrollTop)
-        console.log('scrollHeight',dom.scrollHeight)
-        console.log('clientHeight',dom.clientHeight)
-        
       }else{
         
       }
@@ -269,6 +282,13 @@ export default {
 
     },
     handleDel(id) {
+      if(this.enDelUpload == 0){
+        this.$message({
+          type: 'error',
+          message: '你已经被禁止删除图像',
+        });
+        return false;
+      }
       this.$confirm('是否删除该图像?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -307,7 +327,6 @@ export default {
       );
     },
     enter(index) {
-      console.log('ddd');
       this.seen = true;
       this.current = index;
     },
@@ -483,15 +502,9 @@ export default {
     vm.$on('showChat', (showChat) => {
       this.showChat = true;
       this.showChatFlag = true;
-      // console.log('data', showChat);
       this.userList = showChat.user || []
       this.chatList = showChat.data || []
       this.mark_id = showChat.mark_id
-     
-      console.log('data', showChat.data);
-      console.log('user', showChat.user);
-      console.log('mark_id', showChat.mark_id);
-
     });
   },
   components: {

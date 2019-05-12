@@ -10,13 +10,15 @@
                 </Sider>
                 <Layout :style="{padding: '24px'}">
                   <Content :style="{padding: '24px', minHeight: '780px', background: '#fff'}">
-							      <h1 class='tittle'>好友管理</h1>
+                    <h1 class='tittle'>好友管理</h1>
+                    <p >一共{{num}}个好友</p>
+                    
 										<Divider />
 										<!-- 内容区 -->
 										<div class="courseScoreContent">
 
                       <!-- 搜索框 -->
-                      <div style="display:flex;margin-right:100px;">
+                      <div style="display:flex;justify-content: flex-end;">
                           <div class="serach" style="    margin-left: 10px;">
                               <!-- <Icon type="ios-add" size="32" @click="add" style="margin-top:4px;cursor: pointer;"/> -->
                               <input placeholder="输入需要添加用户" type="text" v-model="newFriendName" style="-webkit-appearance: none;
@@ -65,7 +67,7 @@
                   </Content>
                 </Layout>
             </Layout>
-				<Footer class="layout-footer-center" style="background:#fff;text-align:center">中国大地保险 2018 &copy; 脑穿越</Footer>
+				<Footer class="layout-footer-center" style="background:#fff;text-align:center">图像标注在线协作系统 2019 &copy; 20150390237 黄志谋</Footer>
         </Layout>
     </div>
 </template>
@@ -83,6 +85,7 @@ require('../viewstyle/studentGrade.scss');
 export default {
   data() {
     return {
+      num:0,
       current: 0,
       seen: false,
       userId:sessionStorage.getItem('userId') || -1,
@@ -110,7 +113,6 @@ export default {
   },
   methods: {
     enter(index) {
-      console.log('ddd');
       this.seen = true;
       this.current = index;
     },
@@ -133,7 +135,7 @@ export default {
         (response) => {
           if (response.errcode == 0) {
             this.data = response.data;
-
+            this.num = response.data.length;
           } else {
             this.$message({
               message: response.errcode,

@@ -10,31 +10,19 @@
 				</Sider>
 				<Layout :style="{padding: '24px'}">
 					<Content :style="{padding: '24px', minHeight: '760px', background: '#fff'}">
-						<h1 class='tittle'>消息管理</h1>
+						<h1 class='tittle'>权限管理</h1>
+						<p>一共{{ num }}个用户</p>
+
 						<Divider />
 						<!-- 内容区 -->
 						<div class="accountContent">
-							<div class="accounttitle">
-								<p>一共{{ num }}条消息</p>
-								<div style="display:flex;margin-right:100px;">
+							<div class="accounttitle" style="    justify-content: flex-end;">
+								<div style="">
 									<!-- 搜索框 -->
-									<div class="serach" style="    margin-right: 20px;">
+									<div class="serach" style="">
 										<Icon @click="serach" type="ios-search-outline" size="32" style="margin-top:4px;cursor: pointer;"/>
 										<el-input v-model="serachName" style="width:160px;margin-left:5px;" placeholder="查找用户"></el-input>
 									</div>
-									<!-- <Icon @click="addAccount" type="ios-add-circle-outline" size="31" style="margin:5px 30px;cursor:pointer;"/> -->
-									<div class="partialMatch_head_right">
-											<el-dropdown @command="handleCommand">
-											  <span class="el-dropdown-link">
-												<Icon type="ios-options" size="24"></Icon>{{initSelect}}
-											  </span>
-											  <el-dropdown-menu slot="dropdown">
-												<el-dropdown-item command="0">标注数从高到低</el-dropdown-item>
-												<el-dropdown-item command="-1">标注数从低到高</el-dropdown-item>
-											  </el-dropdown-menu>
-											</el-dropdown>
-										  </div>
-
 								</div>
 							</div>
 							<!-- 账号 -->
@@ -49,43 +37,164 @@
 									header-align="center"
 									width="150">
 									<template slot-scope="scope">
-										{{ allUserData[scope.row.user_id] }}
+										{{ scope.row.user_name }}
 									</template>
 								</el-table-column>
 								<el-table-column
-									label="行为"
+									label="头像"
 									align="center"
 									header-align="center"
-									width="200">
+									width="60">
 									<template slot-scope="scope">
-										{{ scope.row.mapdata == underfine ? '回复了一条信息':'添加了一个标注' }}
+											<div style="display: flex;
+											justify-content: center;
+											align-items: center;">
+											<img width="50" height="50" :src="head_url + scope.row.head_url" alt="">
+											</div>
 									</template>
 								</el-table-column>
 								<el-table-column
-									label="目标"
+									label="上传图像权限"
 									align="center"
 									header-align="center"
-									width="200">
+									width="110">
 									<template slot-scope="scope">
-										{{ scope.row.mapdata != underfine ? '图像编号:' + scope.row.img_id : '标注编号:' + scope.row.mark_id }}
+											<div style="display: flex;
+											justify-content: center;
+											align-items: center;">
+													<span  :class="scope.row.type[0] == 1 ? 'enable_icon':'disable_icon'"></span>
+													<Icon @click="addUploadStatus(scope.row.id,scope.row.type[0])" 
+													style="position: absolute;
+													font-size: 23px;
+													cursor: pointer;
+													color: rgb(255, 255, 255);" 
+													slot="prefix" 
+													:class="scope.row.type[0] == 1 ? 'el-icon-check':'el-icon-close'" 
+													size="24"/>
+											</div>
 									</template>
 								</el-table-column>
 								<el-table-column
-									label="内容"
+									label="删除图像权限"
+									align="center"
+									header-align="center"
+									width="110">
+									<template slot-scope="scope">
+											<div style="display: flex;
+											justify-content: center;
+											align-items: center;">
+													<span  :class="scope.row.type[1] == 1 ? 'enable_icon':'disable_icon'"></span>
+													<Icon @click="delUploadStatus(scope.row.id,scope.row.type[1])" 
+													style="position: absolute;
+													font-size: 23px;
+													cursor: pointer;
+													color: rgb(255, 255, 255);" 
+													slot="prefix" 
+													:class="scope.row.type[1] == 1 ? 'el-icon-check':'el-icon-close'" 
+													size="24"/>
+											</div>
+									</template>
+								</el-table-column>
+								<el-table-column
+									label="新增标注权限"
+									align="center"
+									header-align="center"
+									width="110">
+									<template slot-scope="scope">
+											<div style="display: flex;
+											justify-content: center;
+											align-items: center;">
+													<span  :class="scope.row.type[2] == 1 ? 'enable_icon':'disable_icon'"></span>
+													<Icon @click="addMarkStatus(scope.row.id,scope.row.type[2])" 
+													style="position: absolute;
+													font-size: 23px;
+													cursor: pointer;
+													color: rgb(255, 255, 255);" 
+													slot="prefix" 
+													:class="scope.row.type[2] == 1 ? 'el-icon-check':'el-icon-close'" 
+													size="24"/>
+											</div>
+									</template>
+								</el-table-column>
+								<el-table-column
+									label="修改标注权限"
+									align="center"
+									header-align="center"
+									width="110">
+									<template slot-scope="scope">
+											<div style="display: flex;
+											justify-content: center;
+											align-items: center;">
+													<span  :class="scope.row.type[3] == 1 ? 'enable_icon':'disable_icon'"></span>
+													<Icon @click="editMarkStatus(scope.row.id,scope.row.type[3])" 
+													style="position: absolute;
+													font-size: 23px;
+													cursor: pointer;
+													color: rgb(255, 255, 255);" 
+													slot="prefix" 
+													:class="scope.row.type[3] == 1 ? 'el-icon-check':'el-icon-close'" 
+													size="24"/>
+											</div>
+									</template>
+								</el-table-column>
+								<el-table-column
+									label="删除标注权限"
+									align="center"
+									header-align="center"
+									width="110">
+									<template slot-scope="scope">
+											<div style="display: flex;
+											justify-content: center;
+											align-items: center;">
+													<span  :class="scope.row.type[4] == 1 ? 'enable_icon':'disable_icon'"></span>
+													<Icon @click="delMarkStatus(scope.row.id,scope.row.type[4])" 
+													style="position: absolute;
+													font-size: 23px;
+													cursor: pointer;
+													color: rgb(255, 255, 255);" 
+													slot="prefix" 
+													:class="scope.row.type[4] == 1 ? 'el-icon-check':'el-icon-close'" 
+													size="24"/>
+											</div>
+									</template>
+								</el-table-column>
+								<el-table-column
+									label="留言权限"
+									align="center"
+									header-align="center"
+									width="90">
+									<template slot-scope="scope">
+											<div style="display: flex;
+											justify-content: center;
+											align-items: center;">
+													<span  :class="scope.row.type[5] == 1 ? 'enable_icon':'disable_icon'"></span>
+													<Icon @click="chatStatus(scope.row.id,scope.row.type[5])" 
+													style="position: absolute;
+													font-size: 23px;
+													cursor: pointer;
+													color: rgb(255, 255, 255);" 
+													slot="prefix" 
+													:class="scope.row.type[5] == 1 ? 'el-icon-check':'el-icon-close'" 
+													size="24"/>
+											</div>
+									</template>
+								</el-table-column>
+								<el-table-column
+									label="注册时间"
 									align="center"
 									header-align="center"
 									width="">
 									<template slot-scope="scope">
-										{{ scope.row.mapdata == underfine ? scope.row.content: '标注地址:' + scope.row.mapdata }}
+										{{ scope.row.time }}
 									</template>
 								</el-table-column>
 								<el-table-column
-									label="时间"
+									label="操作"
 									align="center"
 									header-align="center"
-									width="300">
+									width="">
 									<template slot-scope="scope">
-										{{ scope.row.time }}
+										<i @click="delUser(scope.row.id)" style="cursor:pointer;font-size: 30px" class="el-icon-delete"></i>
 									</template>
 								</el-table-column>
 							</el-table>
@@ -93,45 +202,11 @@
 					</Content>
 				</Layout>
 			</Layout>
-			<Footer class="layout-footer-center" style="background:#fff;text-align:center">建设银行智能私教管理后台 2019 &copy; 脑穿越</Footer>
+			<Footer class="layout-footer-center" style="background:#fff;text-align:center">图像标注在线协作系统 2019 &copy; 20150390237 黄志谋</Footer>
 			<div class="accountPage">
-			<!-- <el-pagination
-				background
-				:page-size="5"
-				:page-count="pageCount"
-				@current-change="currentPageChange"
-				layout="prev, pager, next">
-			</el-pagination> -->
 		</div>
 		</Layout>
-		<!-- 新增账号模态框 -->
-		<el-dialog
-			:title="dialogTitle"
-			:close-on-click-modal="false"
-			:visible.sync="addAccountModel"
-			width="500px"
-			>
-			<el-form label-position="left" label-width="70px">
-				<el-form-item label="人员名称">
-					<el-input v-model="peopleName" :maxlength="10" @input="getNameNum" style="width:250px"></el-input>
-					<span style="margin-left:30px; font-size:16px;">({{ peopleNumLength }}/10)</span>
-				</el-form-item>
-				<el-form-item label="账号">
-					<el-input v-model="accountName" style="width:250px"></el-input>
-				</el-form-item>
-				<el-form-item label="部门">
-					<el-input v-model="department" style="width:250px"></el-input>
-				</el-form-item>
-				<el-form-item label="职位">
-					<el-input v-model="profession" style="width:250px"></el-input>
-				</el-form-item>
-			</el-form>
-			<span slot="footer" class="dialog-footer">
-				<el-button @click="addAccountModel = false">取 消</el-button>
-				<el-button v-show="dialogTitle == '新增账号'" :disabled="createAccount" type="primary" @click="confirmAddAccount">创 建</el-button>
-				<el-button v-show="dialogTitle == '账号编辑'" :disabled="createAccount" type="primary" @click="saveAccount">保 存</el-button>
-  		</span> 
-		</el-dialog>
+	
 	</div>
 </template>
 
@@ -140,17 +215,21 @@ import Nav from '@/components/Nav.vue' // @ is an alias to /src
 import Head from '@/components/Head.vue'
 import Bottom from '@/components/Bottom.vue'
 import ParamidaPay from "../paramidaPay.js"
-
+import Config from '../config.js';
 require("../viewstyle/Account.scss")
 require("../viewstyle/partialMatch.scss")
 
 export default {
 	data() {
 		return {
+			head_url:Config.head_url,
+			userType:sessionStorage.getItem('userType'),
 			num:0,
+			allUserTypeData:{},
 			initSelect:'按最近时间排序',
 			underfine:null,
 			allUserData:{},
+			initAllUserData:{},
 			userId: sessionStorage.getItem('userId') || -1,
 			serachName: '', // 搜索框名字
 			resetPassword: '', // 重置密码
@@ -171,26 +250,174 @@ export default {
 		}
 	},
 	methods: {
+		delUser(id){
+			this.$confirm('确定要删除该用户吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        this.enableDelUser(id);
+      }).catch(() => {
+			});
+		},
+		addUploadStatus(id,status){
+			let type = this.allUserTypeData[id];
+			let flag = (status == 1) ? 0 :1;
+			let info = (status == 1) ? '是否禁止该用户上传图像':'是否允许该用户上传图像';
+			type = this.replacepos(type,1,flag);
+			this.$confirm(info, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        this.savaUserPower(id,type);
+      }).catch(() => {
+			});
+		},
+		delUploadStatus(id,status){
+			let type = this.allUserTypeData[id];
+			let flag = (status == 1) ? 0 :1;
+			let info = (status == 1) ? '是否禁止该用户删除图像':'是否允许该用户删除图像';
+			type = this.replacepos(type,2,flag);
+			this.$confirm(info, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        this.savaUserPower(id,type);
+      }).catch(() => {
+			});
+		},
+		addMarkStatus(id,status){
+			let type = this.allUserTypeData[id];
+			let flag = (status == 1) ? 0 : 1;
+			let info = (status == 1) ? '是否禁止该用户新添标注':'是否允许该用户新添标注';
+			type = this.replacepos(type,3,flag);
+			this.$confirm(info, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        this.savaUserPower(id,type);
+      }).catch(() => {
+			});
+		},
+		editMarkStatus(id,status){
+			let type = this.allUserTypeData[id];
+			let flag = (status == 1) ? 0 : 1;
+			let info = (status == 1) ? '是否禁止该用户修改标注':'是否允许该用户修改标注';
+			type = this.replacepos(type,4,flag);
+			this.$confirm(info, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        this.savaUserPower(id,type);
+      }).catch(() => {
+			});
+		},
+		delMarkStatus(id,status){
+			let type = this.allUserTypeData[id];
+			let flag = (status == 1) ? 0 : 1;
+			let info = (status == 1) ? '是否禁止该用户删除标注':'是否允许该用户删除标注';
+			type = this.replacepos(type,5,flag);
+			this.$confirm(info, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        this.savaUserPower(id,type);
+      }).catch(() => {
+			});
+		},
+		chatStatus(id,status){
+			let type = this.allUserTypeData[id];
+			let flag = (status == 1) ? 0 :1;
+			let info = (status == 1) ? '是否禁止该用户进行留言':'是否允许该用户进行留言';
+			type = this.replacepos(type,6,flag);
+			this.$confirm(info, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        this.savaUserPower(id,type);
+      }).catch(() => {
+			});
+		},
+		savaUserPower(id,type){
+			ParamidaPay.ApiCaller.post('index/savaUserPower', {userId:id,userType:type},
+				(response) => {
+				if (response.errcode == 0) {
+						this.$message({
+							message: '修改成功',
+							type: 'success',
+						});
+						this.getAllUser();
+				} else {
+						this.$message({
+							message: response.errcode,
+							type: 'error',
+						});
+					}
+				},
+				(response) => {
+					this.$message({
+						message: response.errcode,
+						type: 'error',
+					});
+				},
+			);
+		},
+		enableDelUser(id){
+			ParamidaPay.ApiCaller.post('index/delOneUser', {userId:id},
+				(response) => {
+				if (response.errcode == 0) {
+						this.$message({
+							message: '删除成功',
+							type: 'success',
+						});
+						this.getAllUser();
+				} else {
+						this.$message({
+							message: response.errcode,
+							type: 'error',
+						});
+					}
+				},
+				(response) => {
+					this.$message({
+						message: response.errcode,
+						type: 'error',
+					});
+				},
+			);
+		},
+		//替换
+		replacepos(strObj, pos, replacetext){
+   	 var str = strObj.substr(0, pos-1) + replacetext + strObj.substring(pos, strObj.length);
+		 return str;
+		},
 		// 搜索
 		serach() {
 			if(this.serachName == ''){
-				this.getContent()
+				this.getAllUser()
 			}else{
 				let searchId = 0;
+				let tmpData = this.initAllUserData;
 				for(let index in this.allUserData){
 					if(this.serachName == this.allUserData[index]){
 						searchId = index;
-						break;
+						break;	
 					}
 				}
 				let tmpList = [];
-				for(let index in this.tableData){
-					if(this.tableData[index]['user_id'] == searchId){
-						tmpList.push(this.tableData[index]);
+				for(let index in tmpData){
+					if(tmpData[index]['id'] == searchId){
+						tmpList.push(tmpData[index]);
 					}
 				}
 				this.tableData = tmpList;
-				this.num = this.tableData.length;
+				this.num = tmpData.length;
 			}
 		},
 	ascNum(array,key){
@@ -209,255 +436,52 @@ export default {
    },
 
 		handleCommand(e) {
-      console.log('ddd',e);
       if (e == 0) {
         this.initSelect = '按最近时间排序';
-        // this.data.sort(this.decNum('nums'))
-        // console.log(this.ascNum(this.data,'nums'))
         this.tableData = this.ascNum(this.tableData,'time');
       } else if (e == -1) {
         this.initSelect = '最先时间排序';
-        // console.log(this.descNum(this.data,'nums'))
         this.tableData = this.descNum(this.tableData,'time');
       }
     },
-		getContent() {
-		ParamidaPay.ApiCaller.post('index/showAllMessage', { id: this.userId },
-			(response) => {
-			if (response.errcode == 0) {
-				//
-				let chatList = [],markList = [],tableList = [];
-				for(let chatIndex in response.chatList){
-					for(let chatIndexSecond in response.chatList[chatIndex]){
-						chatList.push(response.chatList[chatIndex][chatIndexSecond]);
-					}
-				}
-				for(let markIndex in response.markList){
-					for(let markIndexSecond in response.markList[markIndex]){
-						markList.push(response.markList[markIndex][markIndexSecond]);
-					}
-				}
-				this.tableData = chatList.concat(markList);
-				this.num = this.tableData.length;
-				console.log('tableList',chatList.concat(markList));
-
-			} else {
-				this.$message({
-				message: response.errcode,
-				type: 'error',
-				});
-			}
-			},
-			(response) => {
-			this.$message({
-				message: response.errcode,
-				type: 'error',
-			});
-			},
-		);
-		},
+		
 
 		getAllUser() {
-		ParamidaPay.ApiCaller.post('index/showAllUser', {},
-			(response) => {
-			if (response.errcode == 0) {
-			// this.allUserData = response.data;
-			let userData ={};
-			for(let index in response.data){
-				userData[response.data[index].id] = response.data[index].user_name;
-			}
-			this.allUserData = userData;
-			console.log('userData',userData)
-			} else {
+			ParamidaPay.ApiCaller.post('index/showAllUserSurper', {id:this.userId},
+				(response) => {
+				if (response.errcode == 0) {
+				this.tableData = response.data;
+				this.initAllUserData = response.data;
+
+				this.num = response.data.length;
+				let userData ={},userTypeData = {};
+				for(let index in response.data){
+					userData[response.data[index].id] = response.data[index].user_name;
+					userTypeData[response.data[index].id] = response.data[index].type;
+				}
+				this.allUserData = userData;
+				this.allUserTypeData = userTypeData;
+				} else {
+					this.$message({
+					message: response.errcode,
+					type: 'error',
+					});
+				}
+				},
+				(response) => {
 				this.$message({
-				message: response.errcode,
-				type: 'error',
+					message: response.errcode,
+					type: 'error',
 				});
-			}
-			},
-			(response) => {
-			this.$message({
-				message: response.errcode,
-				type: 'error',
-			});
-			},
-		);
+				},
+			);
 		},
 	
-		// 初始化数据
-		initData() {
-			this.peopleName = ''
-			this.accountName = ''
-			this.department = ''
-			this.profession = ''
-		},
-		// 日期转化
-    formatDateTime(date) {
-      var y = date.getFullYear();
-      var m = date.getMonth() + 1;
-      m = m < 10 ? ('0' + m) : m;
-      var d = date.getDate();
-      d = d < 10 ? ('0' + d) : d;
-      var h = date.getHours();
-      var minute = date.getMinutes();
-      minute = minute < 10 ? ('0' + minute) : minute;
-      var second = date.getSeconds();
-      second = second < 10 ? ('0' + minute) : second;
-      return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
-    },
-		// 点击显示添加账户模态框
-		addAccount() {
-			this.initData()
-			this.dialogTitle = '新增账号'
-			this.addAccountModel = true
-		},
-		// 获取输入人员名称长度
-		getNameNum(value) {
-			this.peopleNumLength = value.length
-		},
-		//  重置密码
-		reset(row) {
-			ParamidaPay.ApiCaller.put('/systemUser/systemUser',	{
-				userId: row.userId,
-				isReset: 1
-			}, response => {
-				console.log(response)
-				if(response.errcode == 0) {	
-					this.resetPassword = response.body
-					this.$alert('密码已重置为初始密码: ' + this.resetPassword, '密码已重置', {
-						confirmButtonText: '确定',
-						callback: action => {
-						}
-        	});
-				}
-			})
-		},
-		// 获取所有账户
-		getAllAccount() {
-			ParamidaPay.ApiCaller.get('/systemUser/systemUsers', {
-				pageNo: this.Page,
-				pageSize:10
-			}, response => {
-				console.log(response)
-				if(response.errcode == 0) {
-					this.tableData = response.body.rows
-					this.pageCount = response.body.pageCount
-					this.total = response.body.total
-				}
-			})
-		},
-		// 当前页的改变
-		currentPageChange(Page) {
-			this.Page = Page
-			if(this.serachName == '') {
-				this.getAllAccount()
-			}
-			else {
-				this.serach()
-			}
-		},
-		// 确定添加账户
-		confirmAddAccount() {
-			let addItem = {}
-			addItem.nickName = this.accountName
-			addItem.userName = this.peopleName
-			addItem.department = this.department
-			addItem.positionName = this.profession
-			addItem.createTime = this.formatDateTime(new Date())
-			addItem.updateTime = this.formatDateTime(new Date())
-			addItem.status = 0
-			ParamidaPay.ApiCaller.post('/systemUser/systemUser',{
-				userName: this.peopleName,
-				nickName: this.accountName,
-				department: this.department,
-				positionName: this.profession
-			}, response => {
-				console.log(response)
-				if(response.errcode == 0) {
-					if(this.tableData.length <= 9) {
-						this.tableData.push(addItem)
-					} else {
-						this.pageCount++;
-					}
-					this.addAccountModel = false
-				}
-			})
-		},
-		// 编辑账户信息
-		editAccountInfo(row) {
-			console.log(row)
-			this.editRow = row
-			this.dialogTitle = '账号编辑'
-			this.addAccountModel = true
-			this.peopleName = row.nickName
-			this.accountName=  row.userName
-			this.department = row.department
-			this.profession = row.positionName
-			this.userId = row.userId
-		},
-		// 保存账户
-		saveAccount() {
-			ParamidaPay.ApiCaller.put('/systemUser/systemUser',{
-				userId: this.userId,
-				userName: this.accountName,
-				nickName: this.peopleName,
-				department: this.department,
-				positionName: this.profession
-			}, response => {
-				console.log(response)
-				if(response.errcode == 0) {
-					this.tableData.forEach((item, index) => {
-						if(item == this.editRow) {
-							item.nickName = this.peopleName
-							item.userName = this.accountName
-							item.department = this.department
-							item.positionName = this.profession
-						}
-					})
-					this.addAccountModel = false
-				}
-			})
-		},
-		// 下线
-		offLine(row) {
-			ParamidaPay.ApiCaller.put('/systemUser/systemUser',	{
-				userId: row.userId,
-				status: 0
-			}, response => {
-				console.log(response)
-				if(response.errcode == 0) {
-					this.tableData.forEach((item, index) => {
-						if(item == row) {
-							item.status = 0
-						}
-					})
-				}
-			})
-		},
-		// 上线
-		onLine(row) {
-			ParamidaPay.ApiCaller.put('/systemUser/systemUser',	{
-				userId: row.userId,
-				status: 1
-			}, response => {
-				console.log(response)
-				if(response.errcode == 0) {
-					this.tableData.forEach((item, index) => {
-						if(item == row) {
-							item.status = 1
-						}
-					})
-				}
-			})
-		},
-		
+
 	},
 	mounted() {
 		this.userId = sessionStorage.getItem('userId') || -1;
 		this.getAllUser()
-		this.getContent()
-		// console.log();
-
 	},
 	updated() {
 		this.peopleNumLength = this.peopleName.length
@@ -478,5 +502,21 @@ export default {
 </script>
 
 <style scoped>
+	.enable_icon{
+		cursor: pointer;
+		position: absolute;
+		width: 25px;
+		height: 25px;
+		border-radius: 50%;
+		background-color: greenyellow;
+	}
+	.disable_icon{
+		cursor: pointer;
+		position: absolute;
+		width: 25px;
+		height: 25px;
+		border-radius: 50%;
+		background-color:red;
+	}
 </style>
 

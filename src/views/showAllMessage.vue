@@ -11,12 +11,13 @@
 				<Layout :style="{padding: '24px'}">
 					<Content :style="{padding: '24px', minHeight: '760px', background: '#fff'}">
 						<h1 class='tittle'>消息管理</h1>
+						<p>一共{{ num }}条消息</p>
+
 						<Divider />
 						<!-- 内容区 -->
 						<div class="accountContent">
-							<div class="accounttitle">
-								<p>一共{{ num }}条消息</p>
-								<div style="display:flex;margin-right:100px;">
+							<div class="accounttitle" style="    justify-content: flex-end;">
+								<div style="display:flex;">
 									<!-- 搜索框 -->
 									<div class="serach" style="    margin-right: 20px;">
 										<Icon @click="serach" type="ios-search-outline" size="32" style="margin-top:4px;cursor: pointer;"/>
@@ -29,11 +30,11 @@
 												<Icon type="ios-options" size="24"></Icon>{{initSelect}}
 											  </span>
 											  <el-dropdown-menu slot="dropdown">
-												<el-dropdown-item command="0">标注数从高到低</el-dropdown-item>
-												<el-dropdown-item command="-1">标注数从低到高</el-dropdown-item>
+												<el-dropdown-item command="0">按时间顺序排序</el-dropdown-item>
+												<el-dropdown-item command="-1">按时间倒序排序</el-dropdown-item>
 											  </el-dropdown-menu>
 											</el-dropdown>
-										  </div>
+									</div>
 
 								</div>
 							</div>
@@ -93,7 +94,7 @@
 					</Content>
 				</Layout>
 			</Layout>
-			<Footer class="layout-footer-center" style="background:#fff;text-align:center">建设银行智能私教管理后台 2019 &copy; 脑穿越</Footer>
+			<Footer class="layout-footer-center" style="background:#fff;text-align:center">图像标注在线协作系统 2019 &copy; 20150390237 黄志谋</Footer>
 			<div class="accountPage">
 			<!-- <el-pagination
 				background
@@ -148,7 +149,7 @@ export default {
 	data() {
 		return {
 			num:0,
-			initSelect:'按最近时间排序',
+			initSelect:'按时间顺序排序',
 			underfine:null,
 			allUserData:{},
 			userId: sessionStorage.getItem('userId') || -1,
@@ -157,6 +158,7 @@ export default {
 			editRow: {}, // 修改行
 			userId: '',  // 修改Id
 			tableData: [], // 表格数据
+			initTableData: [], // 表格数据
 			dialogTitle: '', // 模态框标题
 			addAccountModel: false, // 添加账户模态框
 			createAccount: false, // 是否能创建
@@ -173,9 +175,11 @@ export default {
 	methods: {
 		// 搜索
 		serach() {
+			// this.getContent();
 			if(this.serachName == ''){
 				this.getContent()
 			}else{
+				let tmpData = this.initTableData;
 				let searchId = 0;
 				for(let index in this.allUserData){
 					if(this.serachName == this.allUserData[index]){
@@ -184,13 +188,13 @@ export default {
 					}
 				}
 				let tmpList = [];
-				for(let index in this.tableData){
-					if(this.tableData[index]['user_id'] == searchId){
-						tmpList.push(this.tableData[index]);
+				for(let index in tmpData){
+					if(tmpData[index]['user_id'] == searchId){
+						tmpList.push(tmpData[index]);
 					}
 				}
 				this.tableData = tmpList;
-				this.num = this.tableData.length;
+				this.num = tmpList.length;
 			}
 		},
 	ascNum(array,key){
@@ -209,15 +213,11 @@ export default {
    },
 
 		handleCommand(e) {
-      console.log('ddd',e);
       if (e == 0) {
-        this.initSelect = '按最近时间排序';
-        // this.data.sort(this.decNum('nums'))
-        // console.log(this.ascNum(this.data,'nums'))
+        this.initSelect = '按时间顺序排序';
         this.tableData = this.ascNum(this.tableData,'time');
       } else if (e == -1) {
-        this.initSelect = '最先时间排序';
-        // console.log(this.descNum(this.data,'nums'))
+        this.initSelect = '按时间倒序排序';
         this.tableData = this.descNum(this.tableData,'time');
       }
     },
@@ -238,8 +238,8 @@ export default {
 					}
 				}
 				this.tableData = chatList.concat(markList);
+				this.initTableData = chatList.concat(markList);
 				this.num = this.tableData.length;
-				console.log('tableList',chatList.concat(markList));
 
 			} else {
 				this.$message({
@@ -267,7 +267,6 @@ export default {
 				userData[response.data[index].id] = response.data[index].user_name;
 			}
 			this.allUserData = userData;
-			console.log('userData',userData)
 			} else {
 				this.$message({
 				message: response.errcode,
@@ -338,7 +337,6 @@ export default {
 				pageNo: this.Page,
 				pageSize:10
 			}, response => {
-				console.log(response)
 				if(response.errcode == 0) {
 					this.tableData = response.body.rows
 					this.pageCount = response.body.pageCount
@@ -456,8 +454,6 @@ export default {
 		this.userId = sessionStorage.getItem('userId') || -1;
 		this.getAllUser()
 		this.getContent()
-		// console.log();
-
 	},
 	updated() {
 		this.peopleNumLength = this.peopleName.length

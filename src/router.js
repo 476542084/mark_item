@@ -58,6 +58,11 @@ export default new Router({
       component: () => import('./views/showAllMessage.vue'),
     },
     {
+      path: '/powerManage',
+      name: 'powerManage',
+      component: () => import('./views/powerManage.vue'),
+    },
+    {
       path: '/Training',
       name: 'Training',
       component: () => import('./views/Training.vue'),

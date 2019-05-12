@@ -14,7 +14,7 @@
                     <p v-if="!showMark" >你的好友一共分享了{{num}}张图像</p>
                     <Divider v-if="!showMark" />
                     <!-- 搜索框 -->
-									  <div v-if="!showMark" class="serach" style="     float: right;   margin-right: 20px;">
+									  <div v-if="!showMark" class="serach" style="     float: right;">
                       <Icon @click="serach" type="ios-search-outline" size="32" style="margin-top:4px;cursor: pointer;"/>
                       <el-input v-model="serachName" style="width:160px;margin-left:5px;" placeholder="查找某用户分享图像"></el-input>
                     </div>
@@ -111,7 +111,7 @@
                   </Content>
                 </Layout>
             </Layout>
-				<Footer class="layout-footer-center" style="background:#fff;text-align:center">中国大地保险 2018 &copy; 脑穿越</Footer>
+				<Footer class="layout-footer-center" style="background:#fff;text-align:center">图像标注在线协作系统 2019 &copy; 20150390237 黄志谋</Footer>
         </Layout>
     </div>
 </template>
@@ -197,7 +197,6 @@ export default {
 				userData[response.data[index].id] = response.data[index].user_name;
 			}
 			this.allUserData = userData;
-			console.log('userData',userData)
 			} else {
 				this.$message({
 				message: response.errcode,
@@ -232,21 +231,12 @@ export default {
           user_name:this.selfUserName
         };
         let dom = document.getElementsByClassName('m-message')[0]
-
-        console.log('scrollTopBefore',dom.scrollTop)
-
         this.chatList.push(data)
         this.addOneMessageByMark(this.text);
         this.text = '';
-        console.log('data', data);
         this.$nextTick(() => {
           dom.scrollTop = dom.scrollHeight - dom.clientHeight +95;
         });
-       
-        console.log('scrollTop',dom.scrollTop)
-        console.log('scrollHeight',dom.scrollHeight)
-        console.log('clientHeight',dom.clientHeight)
-        
       }else{
         
       }
@@ -300,7 +290,6 @@ export default {
       );
     },
     enter(index) {
-      console.log('ddd');
       this.seen = true;
       this.current = index;
     },
@@ -465,15 +454,9 @@ export default {
     vm.$on('showChat', (showChat) => {
       this.showChat = true;
       this.showChatFlag = true;
-      // console.log('data', showChat);
       this.userList = showChat.user || []
       this.chatList = showChat.data || []
       this.mark_id = showChat.mark_id
-     
-      console.log('data', showChat.data);
-      console.log('user', showChat.user);
-      console.log('mark_id', showChat.mark_id);
-
     });
   },
   components: {

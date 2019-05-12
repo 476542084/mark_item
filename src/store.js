@@ -21,13 +21,11 @@ export default new Vuex.Store({
     },
     set_userName(state,userName){
       state.userName = userName
-      console.log(state.userName)
       sessionStorage.userName = userName
     },
     set_Account(state,password){
     //  state.account = account
       state.password = password
-      console.log(state.password)
       //sessionStorage.account = account
       sessionStorage.password = password
     }
