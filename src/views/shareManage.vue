@@ -134,6 +134,7 @@ require('../viewstyle/wechat.scss');
 export default {
   data() {
     return {
+      enChat:sessionStorage.getItem('enChat'),
       serachName: '', // 搜索框名字
       allUserData:{},
       mark_id:'',
@@ -222,6 +223,15 @@ export default {
             this.text = '';
             return true;
         }
+        if(this.enChat == 0){
+          this.$message({
+            message: '你已经被禁止留言',
+            type: 'error',
+          });
+          this.text = '';
+          return false;
+        }
+
         this.text = this.text.trim()
         const data = {
           content: this.text,
